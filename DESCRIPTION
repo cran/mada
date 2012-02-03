@@ -1,7 +1,7 @@
 Package: mada
 Type: Package
 Title: Meta-Analysis of Diagnostic Accuracy (mada)
-Version: 0.4
+Version: 0.4.1
 Date: 2012-02-03
 Author: Philipp Doebler
 Maintainer: Philipp Doebler <philipp.doebler@googlemail.com>
@@ -17,6 +17,6 @@ License: GPL-2
 URL: r-forge.r-project.org/projects/mada/
 Repository: CRAN
 Repository/R-Forge/Project: mada
-Repository/R-Forge/Revision: 34
-Packaged: 2012-05-25 14:15:17 UTC; rforge
-Date/Publication: 2012-05-26 09:46:21
+Repository/R-Forge/Revision: 38
+Packaged: 2012-06-01 14:15:28 UTC; rforge
+Date/Publication: 2012-06-02 07:53:51

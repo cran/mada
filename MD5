@@ -1,7 +1,7 @@
-2dca8eab691731ffbb1051e07545c55e *DESCRIPTION
+d6bb77d72697e98452fb0b452b838aef *DESCRIPTION
 e8fdccdd7ae290c2079e9aed4e8e0123 *NAMESPACE
 bb8f2d8459b3a8ff3717a97938fd6fb1 *R/ROCellipse.R
-8f5f283bae6fd1959118faf2c9f5753e *R/basics.R
+9b31b882cdc1212bc145ffcf2bb602de *R/basics.R
 9516068fabd492c07a7b66ceed457c4e *R/crosshair.R
 494159f078fe1c374042a79e181900ed *R/forest.R
 05fe005c9a9dca1f922027b090ba7118 *R/madad.R
@@ -14,9 +14,9 @@ d312e9e55e7779d1d527ea850e857cd9 *data/AuditC.rda
 a0c277488d0656142d770df342fbd284 *data/Dementia.rda
 f7b6249c705134d42acb445da755c7ed *data/IAQ.rda
 5ff8543e05d1919b5a9d51bf6d82dad5 *data/SAQ.rda
-31ece8b9173b6ac4382455d181b61ce3 *inst/doc/mada.Rnw
+562f6fd58986b77029c73051b548ad54 *inst/doc/mada.Rnw
 fd27afa0152c950d6bbc2acbc9a7fa33 *inst/doc/mada.bib
-9228159738f6a9c8c53d39319b69fc3e *inst/doc/mada.pdf
+d97aeb4fa110dd562cfea6cb471a6692 *inst/doc/mada.pdf
 4284c662dd2fa7a9f37769f9ecae28ba *man/CIrho.Rd
 f7d3d0e3317f33b6508e6bb5608061b5 *man/ROCellipse.Rd
 65cd6da67176bfb726046a43e271d679 *man/cochran.Q.Rd

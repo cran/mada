@@ -76,6 +76,8 @@ Since this is not an integer, we need to round it to the nearest integer
 <<>>=
 round(y)
 @
+Note that \texttt{mada} is a bit paranoid about the input: it demands that the data and the rounded data are identical to prevent some obvious error.  Hence the use of the \texttt{round} function should not be omitted.
+
 Let us now assume that the number of TP, FP, FN and TN is known for each primary study. A good way to organise information in R is to use \emph{data frames}, which can hold different variables. In our case each row of the data frame corresponds to one primary study. As an example we enter the data from six studies from a meta-analysis of the  AUDIT-C (a short screening test for alcohol problems, \cite{kriston2008meta}) into a data frame
 <<>>=
 AuditC6 <- data.frame(TP = c(47, 126, 19, 36, 130, 84),
