@@ -1,0 +1,148 @@
+%\VignetteIndexEntry{Meta Analysis of Diagnostic Accuracy with mada}
+%\VignetteKeyword{meta analysis, diagnostic test}
+
+\documentclass[a4paper]{article}
+\usepackage{a4wide}
+\usepackage{amsmath,color,amsthm}
+\usepackage{url}
+\usepackage{hyperref}
+
+
+\title{Meta Analysis of Diagnositc Accuracy with \texttt{mada}}
+\author{Philipp Doebler \\
+      philipp.doebler@googlemail.com}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+While substantial work has been conducted on methods for diagnostic meta-analysis, it has not become a routine procedure yet. One of the reasons for this is certainly the complexity of bivariate approaches, but another reason is that standard software packages for meta-analysis, for example \emph{Comprehensive Meta-Analysis} (\cite{}), do not include software to fit models appropriate for diagnostic meta-analysis. For the recommended (\cite{}) bivariate approach of Rutter and Gatsonis (TODO: citation) meta-analysts can use Bayesian approaches (for example in WinBUGS or OpenBUGS\cite{}), the stata macro (TODO: is it called macro?) of \cite{Harbord}, ...(TODO: andere Software raussuchen). So currently available software is either relatively complex (WinBUGS/OpenBUGS) or proprietary (stata, SAS).
+
+The open source R-package \texttt{mada} provides some established and some current approaches to diagnostic meta-analysis, as well as functions to produce descriptive statistics and graphics. It is hopefully complete enough to be the only tool needed for a diagnostic meta-analysis. \texttt{mada} has been developed with an R user in mind that has used standard model fitting functions already, and a lot of the output of \texttt{mada} will look familiar to such a user. While this vignette cannot provide an introduction to R, it is hopefully detailed enough to provide a novice R user with enough hints to perform diagnostic meta-analysis along the lines of it. Free introductions to R are available on the homepage of the R project (\href{http://www.r-project.org/}).
+
+\section{Obtaining \texttt{mada}}
+Once R is installed and an internet connection is available, the package can be installed from CRAN on most systems by typing
+<<eval=FALSE>>=
+install.packages("mada")
+@
+Development of \texttt{mada} is hosted at \texttt{http://r-forge.r-project.org/projects/mada/}; the most current version is available there, while only stable versions are available from CRAN. The package can then be loaded:
+<<>>=
+library(mada)
+@
+
+\section{Entering data}
+Primary diagnostic studies observe the result of a \emph{gold standard} procedure which defines the presence or absence of a \emph{condition}, and the result of a  \emph{diagnostic test} (typically some kind of low cost procedure, or at least one that is less invasive than the gold standard). Data from such a primary study could be reported in a $2\times2$, see Table \ref{2times2}.
+
+\begin{table}[h]\caption{Data from the $i$th study in a $2\times2$ table}\label{2times2}
+\begin{center}
+\begin{tabular}[tbp]{lcc}\hline
+  		&with condition &without condition \\
+\hline
+Test positive	& $y_i$		& $z_i$ \\
+Test negative	& $m_i-y_i$ 	&$n_i-z_i$\\ 
+\hline
+Total&$m_i$&$n_i$\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The numbers $y_i$ and $z_i$ are the numbers of true-positives (TP) and false positives (FP), respectively, and $m_i-y_i$ and $n_i-z_i$ are the numbers of false negatives (FN) and true negatives (TN). Often derived measures of diagnostic accuracy are calculated from 2$\times$2 tables. Using the notation in Table \ref{2times2}, one can calculate
+
+\begin{eqnarray}
+\text{sensitivity}_i  &=& \frac{y_i}{m_i}\\
+\text{specificity}_i  &=& \frac{n_i - z_i}{n_i}\\
+\text{false positive rate}_i &=& \frac{z_i}{n_i}.
+\end{eqnarray}
+
+The \texttt{mada} package needs the 2$\times$2 tables. We can use R to calculate the table given specificities or sensitivities if the sample size in each group is known (sometimes there is insufficient data to reconstruct the 2$\times$2 table). The above formulae for the sensitivity for example implies that
+\[
+y_i = m_i\text{sensitivity}_i.
+\]
+If a primary study reports a sensitivity of .944 and that there were 142 people with the condition, we can calculate $y$ by
+<<>>=
+y <- 142 * .944 
+y
+@
+Since this is not an integer, we need to round it to the nearest integer
+<<>>=
+round(y)
+@
+Let us now assume that the number of TP, FP, FN and TN is known for each primary study. A good way to organise information in R is to use \emph{data frames}, which can hold different variables. In our case each row of the data frame corresponds to one primary study. As an example we enter the data from six studies from the AUDIT-C meta-analysis of (TODO: Zitat) into a data frame
+<<>>=
+AuditC6 <- data.frame(TP = c(47, 126, 19, 36, 130, 84),
+                      FN = c(9, 51, 10, 3, 19, 2),
+                      FP = c(101, 272, 12, 78, 211, 68),
+                      TN = c(738, 1543, 192, 276, 959, 89))
+AuditC6
+@
+Note that many central functions in \texttt{mada} also accept four vectors of frequencies (TP, FN, FP, TN) as input. Nevertheless, it is convenient to store not only the observed frequencies, but also the study names in the same data frame. The following command shows how to do this for our shortened example:
+<<>>=
+AuditC6$names <- c("Study 1","Study 2","Study 4","Study 4","Study 5","Study 6")
+@
+The full data set with 14 studies is part of \texttt{mada}; 
+let's load the data set and have a look at it:
+<<>>=
+data(AuditC)
+AuditC
+@
+In the following we will use the \texttt{AuditC} data set as a running example. The reader is encouraged though to see what happens if only the first 6 studies are used in the subsequent calculations.
+
+\section{Descriptive statistics}
+Descriptive statistics for a data set include the sensitivity, specificity and false-positive rate of the primary studies and also their positive and negative likelihood ratios, and their diagnostic odds ratio (DOR; TODO: Zitat einbauen). These are defined as
+\[
+\mathrm{posLR} = sensitivity/false positive rate,
+\]
+\[
+\mathrm{negLR} = (1-sensitivity)/specificity,
+\]
+and
+\[
+\mathrm{DOR} = \mathrm{posLR}/\mathrm{negLR} = \frac{TP TN}{FN FP}.
+\]
+All these are easily computed for each study using the \texttt{madad} function, together with their confidence intervals (Zitat auf  Deeks JJ. Systematic reviews of evaluations of diagnostic and screening tests. In Egger M, Smith GD, Altman DG (eds). Systematic Reviews in Health Care. Meta-analysis in context. London: BMJ Books; 2001:248-282.). \texttt{madad} also performs $\chi^2$ tests to assess heterogeneity of sensitivities and specificities, the null hypothesis being in both cases, that all are equal. Finally the correlation of sensitivities and false positive rates is calculated to give a hint whether the cut-off value problem is present.
+<<>>=
+madad(AuditC)
+@
+For the AUDIT-C data, the underlying call to \texttt{prop.test} produces a warningm which should not worry us here. The \texttt{madad} function has a range of options with respect to computational details; for example one can compute 80\% confidence intervals:
+<<eval=FALSE>>=
+madad(AuditC, level = 0.80)
+@
+Also note that all the output of \texttt{madad} is available for further computations if one assigns the output of \texttt{madad} to an object. For example the false positive rates with their confidence intervals can be extracted  using the \$ construct:
+<<eval=FALSE>>=
+AuditC.d <- madad(AuditC)
+AuditC.d$fpr
+@
+\subsection{Descriptive graphics}
+For the AUDIT-C data, the $\chi^2$ tests already suggested heterogeneity of sensitivities and specificities. The corresponding \emph{forest plots} confirm this:
+<<eval=FALSE>>=
+forest(madad(AuditC), type = "sens")
+forest(madad(AuditC), type = "spec")
+@
+A slightly enhanced version of these plots is shown in Figure \ref{forestplots}.
+
+Apart from these univariate graphics \texttt{mada} provides a variety of plots to study the data on ROC space. Note that for exploratory purposes it is often useful to employ color and other features of R's plotting system. Two high level plots are provided by \texttt{mada}: \texttt{crosshair} to produce Crosshair plots (TODO: Zitat auf Philipps paper), and \texttt{ROCellipse}. The following is an example of a call of \texttt{crosshair} that produces (arbitrarily) colored crosshairs and makes the crosshairs wider with increased sample size; also only a portion of ROC space is plotted.
+<<>>=
+## calculate weights:
+rs <- rowSums(AuditC)
+rs <- 4 * rs/max(rs)
+crosshair(AuditC, xlim = c(0,0.6), ylim = c(0.4,1), col = 1:14, lwd = rs)
+@
+\texttt{ROCellipse} plots confidence regions which describe the uncertainty of the pair of sensitivity and false positive rate. These regions are ellipses on logit ROC space, and by backtransforming them to regular ROC space the (sometimes oddly shaped) regions are produced. By default this function will also plot the point estimates. The following example is a bit contrived: here the plotting of the point estimates is suppressed manipulating the \texttt{pch} argument, but then points are added in the next step.
+<<>>=
+ROCellipse(AuditC, pch = "")
+points(fpr(AuditC), sens(AuditC))
+@
+Figure \ref{diagplots} displays the two descriptive plots.
+
+\section{Univariate Approaches}
+Before the advent of the bivariate approaches by (TODO: Zitat Rutter Gatsonis) and (TODO: Zitat Reitsma et al), some univariate approaches diagnostic accuracy where popular. Since pooling sensitivities or specificities can be misleading (TODO: Zitat), options for the meta-analysis of these are not provided. \texttt{mada} does provide approaches for the DOR (TODO: zitat glas), the positive and negative likelihood ratios, and the proportional hazards model of (TODO: Zitat).
+
+
+
+
+\section{A bivariate approach}
+
+\section{Concluding remarks}
+
+
+\end{document}
