@@ -1,4 +1,4 @@
-44ace5fcb247ba9fe19600a8c8636ceb *DESCRIPTION
+292fb881161bc07b8905f1326288ae7e *DESCRIPTION
 425e4fd35317af4857b55910e20dbe6e *NAMESPACE
 b39c1791fa066ef701e0f9bb2e10d206 *R/AUC.R
 1fbb5aa8fda5461ab1cbec96300f7004 *R/ROCellipse.R
@@ -8,7 +8,7 @@ b39c1791fa066ef701e0f9bb2e10d206 *R/AUC.R
 05fe005c9a9dca1f922027b090ba7118 *R/madad.R
 55c7674f9037d780cab33a3bb987067a *R/madauni.R
 5176919360b6b792fac8b721a1413d26 *R/phm.R
-b04439759dba32e10b61c9ee2d3fac94 *R/reitsma.R
+d59f3edbe50eae7f016c5ca872f82174 *R/reitsma.R
 a647cf64b04eb9ea54f2d69a4e59be4a *R/sroc.R
 bdb50e83917538ce56d373f417c9cb3d *R/t_alpha.R
 a655e8b5804674287a0b399bac516a94 *data/AuditC.rda
@@ -18,7 +18,7 @@ c2b5b71a6de038b6cec49025f72b9d7c *data/SAQ.rda
 c99795465bda2c8eecf3336e1b8a7879 *data/smoking.rda
 29248b01eae115aa79fb40f58453cfba *inst/doc/mada.Rnw
 d00d40be75d7f3c1fb8445e7a2d8396c *inst/doc/mada.bib
-29c6fdd3f2d40b6c5f67da47214ac5f5 *inst/doc/mada.pdf
+07e7995e4d0c733783947656d095702d *inst/doc/mada.pdf
 240c981f303c4ba2f40650691cbfd983 *man/AUC.Rd
 4284c662dd2fa7a9f37769f9ecae28ba *man/CIrho.Rd
 f7d3d0e3317f33b6508e6bb5608061b5 *man/ROCellipse.Rd

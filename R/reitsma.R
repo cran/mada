@@ -204,7 +204,8 @@ print.summary.reitsma <- function (x, digits = 4, ...){
     cat("Fixed-effects coefficients", "\n", sep = "")
     signif <- symnum(x$coefficients[, "Pr(>|z|)"], corr = FALSE, 
                      na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 
-                                               1), symbols = c("***", "**", "*", ".", " "))
+                                               1), 
+                     symbols = c("***", "**", "*", ".", " "))
     tabletot <- formatC(x$coefficients, digits = digits, format = "f")
     tabletot <- gsub("NA"," -",tabletot)
     tabletot <- cbind(tabletot, signif)
@@ -327,6 +328,8 @@ AUC.reitsma <- function(x, fpr = 1:99/100, ...){
   rsroc <- function(x){mada:::calc.sroc(x, alpha.sens, alpha.fpr, mu1, mu2, sigma2, sigma)}
   AUC <- mada:::AUC.default(rsroc, fpr = fpr, ...)
   obsfprrange <- range(fpr(x$freqdata))
+  obsfprrange[1] <- max(0.01,obsfprrange[1])
+  obsfprrange[2] <- min(0.99,obsfprrange[2])
   obsfpr <- seq(from = obsfprrange[1], to = obsfprrange[2], length.out = 99)
   pAUC <- mada:::AUC.default(rsroc, fpr = obsfpr, ...)
   names(pAUC) <- c("pAUC")
