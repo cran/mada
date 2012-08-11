@@ -44,10 +44,21 @@ Objects of the class \code{\link{phm}} are output by the function with the same 
   \item{...}{arguments to be passed on to other functions}
 }
 \details{
-The SROC curve is derived from the model formula.  The confidence bands are calculated from the bounds of the confidence interval for the diagnostic accuracy parameter \eqn{\theta}
+The SROC curve is derived from the model formula.  The confidence bands are calculated from the bounds of the confidence interval for the diagnostic accuracy parameter \eqn{\theta}. The parameter and its confidence interval are then also used to calculate the AUC and partial AUC using the formulae
+\deqn{
+AUC(a,b) = \int_a^bu^\theta\mathrm{d}u = \frac{1}{\theta+1}[b^{\theta+1}-a^{\theta+1}],
+}
+\deqn{
+AUC = AUC(0,1)
+}
+and
+\deqn{
+pAUC = \frac{1}{b-a}AUC(a,b),
+}
+where \eqn{a} is the lower bound of the observed false positive rates and \eqn{b} the upper.
 }
 \value{
-The \code{sroc} function returns a matrix ready for plotting.Each row corresponds to one point in ROC space.}
+The \code{sroc} function returns a matrix ready for plotting. Each row corresponds to one point in ROC space.}
 \references{
 Boehning D., Boehning, W., Holling, H., Doebler, P. (2012) \dQuote{Meta-Analysis of Diagnostic Studies based upon SROC-Curves: a Mixed Model Approach using a Proportional Hazards Model.} \emph{submitted}
 }

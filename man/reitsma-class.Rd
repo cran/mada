@@ -23,7 +23,7 @@ Methods for \code{reitsma} objects.
 Objects of the class \code{\link{reitsma}} are output by the function with the same name. Apart from standard methods the functions \code{sroc}, \code{mcsroc} and \code{ROCellipse} provide SROC curves and confidence regions for fits.
 }
 \usage{
-\method{print}{reitsma}(x, ...)
+\method{print}{reitsma}(x, digits = 4, ...)
 \method{summary}{reitsma}(object, level = 0.95, ...)
 \method{sroc}{reitsma}(fit, fpr = 1:99/100, ...)
 \method{mcsroc}{reitsma}(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...)
@@ -36,6 +36,7 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
   \item{x}{a \code{reitsma} object.}
   \item{object}{a \code{reitsma} object.}
 \item{fit}{a \code{reitsma} object.}
+\item{digits}{number of decimal digits to print.}
   \item{level}{numeric, the level for calculations of confidence intervals (\code{summary}) or regions (\code{ROCellipse})}
   \item{fpr}{numeric, the false positives rates for which to calculate the predicted sensitivities}
   \item{replications}{integer, the number of replications for the Monte-Carlo SROC curve}
@@ -55,7 +56,7 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 The confidence regions of \code{ROCellipse} are first calculated as ellipses on logit-ROC space, so the back-transformed regions that are output are not necessarily ellipses. The Monte-Carlo SROC curves are generated from random samples from the fitted model and a \code{\link{lowess}} smooth through them is output. Many computational details are to be found in Doebler et al. (2012).
 }
 \value{
-\code{sroc} a  matrix ready for plotting. Each row corresponds to one point in ROC space. \code{mcsroc} returns a \code{\link{lowess}} smooth. \code{ROCellipse} returns a list, the first element being a matrix of points in ROC space that delimit the confidence region and the second is the point estimate of the pair of sensitivity and false positive rate in ROC space.
+\code{sroc} returns a  matrix ready for plotting. Each row corresponds to one point in ROC space. \code{mcsroc} returns a \code{\link{lowess}} smooth. \code{ROCellipse} returns a list, the first element being a matrix of points in ROC space that delimit the confidence region and the second is the point estimate of the pair of sensitivity and false positive rate in ROC space.
 }
 \references{
 Doebler, P., Holling, H., Boehning, D. (2012) \dQuote{A Mixed Model Approach to Meta-Analysis of Diagnostic Studies with Binary Test Outcome.} \emph{Psychological Methods}, to appear

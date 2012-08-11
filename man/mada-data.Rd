@@ -5,31 +5,34 @@
 \alias{Dementia}
 \alias{IAQ}
 \alias{SAQ}
+\alias{smoking}
 
 \title{Diagnostic accuracy data}
 
-\description{Four data frames with diagnostic accuracy data from binary test outcomes.}
+\description{Five data frames with diagnostic accuracy data from binary test outcomes.}
 
 \usage{
 data("AuditC")
 data("Dementia")
 data("IAQ")
 data("SAQ")
+data("smoking")
 }
 
 
-\format{Four data frames with 4 variables.
+\format{Five data frames. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and is the only one with 5 variables. 
   \describe{
   \item{TP}{integer. number of true positives}  
   \item{FN}{integer. number of false negatives}  
   \item{FP}{integer. number of false positives}  
   \item{TN}{integer. number of true negatives}  
+  \item{type}{factor. self-administered or interviewer-administered questionnaire}
   }
 }
 
 
 \details{
-The \code{AuditC} data is from Kriston et al. (2008). The \code{Dementia} from Mitchell (2009) and the \code{SAQ} and \code{IAQ} data are subsets from the data in Patrick et al. (1994)
+The \code{AuditC} data is from Kriston et al. (2008). The \code{Dementia} from Mitchell (2009) and the \code{SAQ} and \code{IAQ} data are subsets from the data in Patrick et al. (1994), while \code{smoking} is the complete data.
 }
 
 \source{

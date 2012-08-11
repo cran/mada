@@ -165,7 +165,7 @@ if(!hetero){
 
 summary.phm <- function(object, level = 0.95, ...)
 {
-output <-list(object = object, level = level)
+output <-list(object = object, level = level, AUC = AUC(object, level = level))
 class(output) <- "summary.phm"
 return(output)
 }
@@ -183,6 +183,12 @@ cat(c("AIC: ", round(AIC(x$object),1), "\n"))
 cat(c("BIC: ", round(AIC(x$object, k = log(x$object$nobs)),1), "\n"))
 
 print(x$object$chi_sq_test)
+
+cat("\n")
+auc <- c(x$AUC$AUC, x$AUC$ci, x$AUC$pAUC, x$AUC$pci)
+names(auc)[1] <- "AUC"
+names(auc)[4] <- "pAUC"
+print(round(auc,3))
 }
 
 logLik.phm <- function(object, ...){object$logLik}

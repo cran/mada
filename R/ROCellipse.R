@@ -38,29 +38,25 @@ ROCellipse.default <- function(x, correction = 0.5, level = 0.95,
 ROC.ellipse2 <- function(fit, nobs, conf.level = 0.95, pch = 1, add = TRUE, ...)
 {
   if(is.null(nobs)){stop("number of observations (nobs) is missing")}
-  estimate <- fit$coefficients
-  alpha.sens <- 1
-  alpha.fpr <- 1
-  if(length(estimate) == 7){alpha.sens <- estimate[6]; alpha.fpr <- estimate[7]}
-  mu <- c(estimate[1], estimate[2])
-  sigma1 <- estimate[3]
-  sigma2 <- estimate[4]
-  sigma <- estimate[5]
-  Sigma <- matrix(c(sigma1, sigma, sigma, sigma2), ncol =2)/nobs
-  
+  alpha.sens <- fit$alphasens
+  alpha.fpr <- fit$alphafpr
+  mu <- fit$coefficients["(Intercept)",]
+  Sigma <- fit$Psi/nobs
   talphaellipse <- ellipse(Sigma, centre = mu, level = conf.level)
   
   ROCellipse <- matrix(0, ncol = 2, nrow = nrow(talphaellipse))
   
-  ROCellipse[,1] <- inv.trafo(alpha.fpr, talphaellipse[,2])
-  ROCellipse[,2] <- inv.trafo(alpha.sens, talphaellipse[,1])
+  ROCellipse[,1] <- mada:::inv.trafo(alpha.fpr, talphaellipse[,2])
+  ROCellipse[,2] <- mada:::inv.trafo(alpha.sens, talphaellipse[,1])
   if(add){
     lines(ROCellipse, ...)
-    points(inv.trafo(alpha.fpr, mu[2]), inv.trafo(alpha.sens, mu[1]), pch = pch, ...)
+    points(mada:::inv.trafo(alpha.fpr, mu[2]), 
+           mada:::inv.trafo(alpha.sens, mu[1]), pch = pch, ...)
     return(invisible(NULL))
     }
   if(!add){
     return(list(ROCellipse = ROCellipse, 
-                fprsens = matrix(c(inv.trafo(alpha.fpr, mu[2]), inv.trafo(alpha.sens, mu[1])),nrow = 1)))
+                fprsens = matrix(c(mada:::inv.trafo(alpha.fpr, mu[2]), 
+                                   mada:::inv.trafo(alpha.sens, mu[1])),nrow = 1)))
   }
 }

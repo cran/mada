@@ -6,6 +6,7 @@
 \usepackage{amsmath,color,amsthm}
 \usepackage{url}
 \usepackage{hyperref}
+\usepackage[utf8]{inputenc}
 %\usepackage{biblatex}
 
 \DeclareMathOperator{\logit}{logit}
@@ -18,6 +19,7 @@
       philipp.doebler@googlemail.com}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \setkeys{Gin}{width=0.6\textwidth}
 
@@ -27,7 +29,7 @@
 \section{Introduction}
 While substantial work has been conducted on methods for diagnostic meta-analysis, it has not become a routine procedure yet. One of the reasons for this is certainly the complexity of bivariate approaches, but another reason is that standard software packages for meta-analysis, for example \emph{Comprehensive Meta-Analysis} and \emph{RevMan} (\cite{cma},\cite{revman}), do not include software to fit models appropriate for diagnostic meta-analysis. For the recommended (\cite{leeflang2008systematic}) bivariate approach of Rutter and Gatsonis (\cite{rutter2001hierarchical}) meta-analysts can use Bayesian approaches (for example in WinBUGS (\cite{lunn2000winbugs}) or OpenBUGS (\cite{lunn2009bugs})), the stata module \texttt{metandi} (\cite{harbord2010metandi}), or the SAS macro \texttt{METADAS} (\cite{takwoingi2008metadas}). So currently available software is either relatively complex (WinBUGS/OpenBUGS) or proprietary (stata, SAS).
 
-The open source R-package \texttt{mada} provides some established and some current approaches to diagnostic meta-analysis, as well as functions to produce descriptive statistics and graphics. It is hopefully complete enough to be the only tool needed for a diagnostic meta-analysis. \texttt{mada} has been developed with an R user in mind that has used standard model fitting functions already, and a lot of the output of \texttt{mada} will look familiar to such a user. While this vignette cannot provide an introduction to R, it is hopefully detailed enough to provide a novice R user with enough hints to perform diagnostic meta-analysis along the lines of it. Free introductions to R are available on the homepage of the \href{http://www.r-project.org/}{R project}. We assume that the reader is familiar with central concepts of meta-analysis, like fixed and random effects models (for example \cite{borenstein2009introductionto}) and ideas behind diagnostic accuracy meta-analysis and (S)ROC curves (a starting points could be \cite{sutton2000methods}, \cite{walter2002properties}, \cite{jones2005summary} or \cite{leeflang2008systematic}).
+The open source R-package \texttt{mada} provides some established and some current approaches to diagnostic meta-analysis, as well as functions to produce descriptive statistics and graphics. It is hopefully complete enough to be the only tool needed for a diagnostic meta-analysis. \texttt{mada} has been developed with an R user in mind that has used standard model fitting functions already, and a lot of the output of \texttt{mada} will look familiar to such a user. While this vignette cannot provide an introduction to R, it is hopefully detailed enough to provide a novice R user with enough hints to perform diagnostic meta-analysis along the lines of it. Free introductions to R are available on the homepage of the \href{http://www.r-project.org/}{R project}. We assume that the reader is familiar with central concepts of meta-analysis, like fixed and random effects models (for example \cite{borenstein2009introductionto}) and ideas behind diagnostic accuracy meta-analysis and (S)ROC curves (starting points could be \cite{sutton2000methods}, \cite{walter2002properties}, \cite{jones2005summary} or \cite{leeflang2008systematic}).
 
 \section{Obtaining \texttt{mada}}
 Once R is installed and an internet connection is available, the package can be installed from CRAN on most systems by typing
@@ -105,7 +107,7 @@ In the analysis of data in 2$\times$2 tables zero cells often lead to problems o
 \section{Descriptive statistics}
 Descriptive statistics for a data set include the sensitivity, specificity and false-positive rate of the primary studies and also their positive and negative likelihood ratios ($\mathrm{LR}_+, \mathrm{LR}_-$), and their diagnostic odds ratio (DOR; \cite{glas2003diagnostic}). These are defined as
 \[
-\\mathrm{LR}_+ = \frac{p}{u} = \frac{\text{sensitivity}}{\text{false positive rate}},
+\mathrm{LR}_+ = \frac{p}{u} = \frac{\text{sensitivity}}{\text{false positive rate}},
 \]
 \[
 \mathrm{LR}_- = \frac{1-p}{1-u},
@@ -235,7 +237,7 @@ dev.off()
 
 
 \section{Univariate Approaches}
-Before the advent of the bivariate approaches by \cite{rutter2001hierarchical} and \cite{reitsma2005bivariate}, some univariate approaches to the meta-analysis of diagnostic accuracy were more popular. Bivariate approaches can only be recommended though, if the sample size is reasonably large; the bivariate model of \cite{reitsma2005bivariate} for example has 5 parameters, which would clearly be too much for a handful of studies. Hence \texttt{mada} provides some univariate methods. Since pooling sensitivities or specificities can be misleading (\cite{gatsonis2006meta}), options for the univariate meta-analysis of these are not provided. \texttt{mada} does provide approaches for the DOR (\cite{glas2003diagnostic}), the positive and negative likelihood ratios, and $\theta$, the accuracy parameter of the proportional hazards model for diagnostic meta-analysis (\cite{boehningphm}). In this vignette we explain the details on the DOR methodology and the methods for $\theta$.
+Before the advent of the bivariate approaches by \cite{rutter2001hierarchical} and \cite{reitsma2005bivariate}, some univariate approaches to the meta-analysis of diagnostic accuracy were more popular.  Bivariate approaches cannot be recommended if the sample size is too small. The bivariate model of \cite{reitsma2005bivariate} for example has 5 parameters, which would clearly be too much for a handful of studies. Hence \texttt{mada} provides some univariate methods. Since pooling sensitivities or specificities can be misleading (\cite{gatsonis2006meta}), options for the univariate meta-analysis of these are not provided. \texttt{mada} does provide approaches for the DOR (\cite{glas2003diagnostic}), the positive and negative likelihood ratios, and $\theta$, the accuracy parameter of the proportional hazards model for diagnostic meta-analysis (\cite{boehningphm}). In this vignette we explain the details on the DOR methodology and the methods for $\theta$.
 
 \subsection{Diagnostic odds ratio}
 In analogy to the meta-analysis of the odds ratio (OR) methods for the meta-analysis of the DOR can be developed (\cite{glas2003diagnostic}). For the \emph{fixed effects} case a Mantel-Haenszel (MH; see for example \cite{deeks2001systematic}) is provided by \texttt{mada}. The underlying fixed effects model has the form
@@ -310,13 +312,18 @@ plot(fit.phm.het, xlim = c(0,0.6), ylim = c(0.4,1))
 ROCellipse(AuditC, add = TRUE)
 @
 \end{center}
-Note that the SROC curve is not extrapolated beyond the range of the original data. 
-
+Note that the SROC curve is not extrapolated beyond the range of the original data. The area under the SROC curve, the AUC, is also part of the summary above. For the PHM it is calculated by
+\[
+\mathrm{AUC} = \frac{1}{\theta + 1},
+\]
+and by the same relation a confidence interval for the AUC can be computed from the confidence interval for $\theta$. The \texttt{mada} package also offers the \texttt{AUC} function to calculate the AUC of other SROC curves which uses the trapezoidal rule.
 
 \section{A bivariate approach}
 Typically the sensitivity and specificity of a diagnostic test depend on each other through a cut-off value: as the cut-off is varied to, say, increase the sensitivity, the specificity often decreases. So in a meta-analytic setting one will often observe (negatively) correlated sensitivities and specificities. This observation can (equivalently) also be state as a (positive) correlation of sensitivities and false positive rates. Since these two quantities are interrelated, bivariate approaches to the meta-analysis of diagnostic accuracy have been quite successful (\cite{rutter2001hierarchical}, \cite{van2002advanced}, \cite{reitsma2005bivariate}, \cite{harbord2007unification}, \cite{arends2008bivariate}).
 
-One typically assumes a binomial model conditional on a primary studies true sensitivity and false positive rates, and a bivariate normal model for the logit-transformed pairs of sensitivities and false positive rates. There are two ways to cast the final model: as a non-linear mixed model or as linear mixed model (see for example \cite{arends2008bivariate}). The latter approach is implemented in \texttt{mada}'s \texttt{reitsma} function, so we give some more details. Let $p_i$ and $u_i$ denote the $i$th study's true sensitivity and false positive rate respectively, and let $\hat p_i$ and $\hat u_i$ denote their estimates from the observed frequencies. Then, since a binomial model is assumed conditional on the true $p_i$, the variance of $\logit(\hat p_i)$ can be approximated by
+One typically assumes a binomial model conditional on a primary studies true sensitivity and false positive rates, and a bivariate normal model for the logit-transformed pairs of sensitivities and false positive rates. There are two ways to cast the final model: as a non-linear mixed model or as linear mixed model (see for example \cite{arends2008bivariate}). The latter approach is implemented in \texttt{mada}'s \texttt{reitsma} function, so we give some more details. We note that more generally the following can be seen as a multivariate meta-regression (the package \texttt{mvmeta} (\cite{gasparrini2012}) serves as a basis for our implementation). 
+
+Let $p_i$ and $u_i$ denote the $i$th study's true sensitivity and false positive rate respectively, and let $\hat p_i$ and $\hat u_i$ denote their estimates from the observed frequencies. Then, since a binomial model is assumed conditional on the true $p_i$, the variance of $\logit(\hat p_i)$ can be approximated by
 \[
 \frac{\hat p_i(1 - \hat p_i)}{m_i},
 \]
@@ -380,10 +387,45 @@ points(fpr(SAQ), sens(SAQ), pch = 2, cex = 0.5)
 legend("bottomright", c("IAQ", "SAQ"), pch = 1:2, lty = 1:2)
 @
 \end{center}
-The summary estimates are well separated, though the confidence regions slightly overlap. It would nevertheless be save to conclude that IAQ is a more reliable way to measure smoking than SAQ.
+The summary estimates are well separated, though the confidence regions slightly overlap. It would nevertheless be safe to conclude that IAQ is a more reliable way to measure smoking than SAQ.
+
+\subsection{Using \texttt{mada} for bivariate meta-regression}
+We demonstrate diagnostic meta-regression also using the data of \cite{patrick1994validity}. We use the complete data set, which is loaded by
+<<>>=
+data(smoking)
+@
+The \texttt{data.frame} contains the same variables as the \texttt{SAQ} and \texttt{IAQ} subsets, but the type is coded by the fifth variable \texttt{type}:
+<<>>=
+summary(smoking$type)
+@
+We use the factor \texttt{type} as a covariate in diagnostic meta-regression:
+<<>>=
+fit.smoking <- reitsma(smoking, formula = cbind(tsens, tfpr) ~ type)
+@
+Note that the left hand side of the \texttt{formula} object always has to be of the form \texttt{cbind(tsens, tfpr)}, where \texttt{tsens} and \texttt{tfpr} are for \emph{transformed} sensitivity and false positive rate respectively.
+We generate detailed output by:
+<<>>=
+summary(fit.smoking)
+@
+This output can be interpreted as follows: The $z$-value for the regression coefficient for the sensitivities is significant, indicating that the interviewer administered questionnaires offer a better sensitivity. Interestingly the point estimate for the  false-positive rates does not indicate any effect.
+
+Note that once meta-regression is used, one cannot reasonably plot SROC curves, since fixed values for the covariates would have to be supplied to do so. Also (global) AUC values do not make sense.
+
+\subsection{Transformations beyond the logit}
+All bivariate approaches explained so far use the conventional logit transformation. The \texttt{reitsma} function offers the parametric $t_\alpha$ family (\cite{doebler2012mixed}) of transformations as alternatives. The family is defined by
+\[
+t_\alpha(x) := \alpha\log(x) - (2-\alpha)\log(1-x),\quad x\in (0,1), \alpha\in [0,2].
+\]
+For $\alpha = 1$, the logit is obtained. In many cases the fit of a bivariate meta-regression can be improved upon by choosing adequate values for $\alpha$. The rational behind this is, that especially sensitivities tend to cluster around values like .95 and the symmetric logit transformation does not necessarily lead to normally distributed transformed proportions. As an example we study the \texttt{smoking} data again:
+<<>>=
+fit.smoking1 <- reitsma(smoking)
+fit.smoking2 <- reitsma(smoking, alphasens = 0, alphafpr = 2)
+AIC(fit.smoking1)
+AIC(fit.smoking2) # fit improved
+@
 
 \section{Further development of \texttt{mada}}
-In the future \texttt{mada} will provide functions for meta regression of diagnostic accuracy and will support the mixture approach of \cite{holling2011likelihood} to the meta-analysis of $\theta$ as well as the bivariate approach based on the $t_\alpha$ transformation of \cite{doebler2012mixed}.
+In the future \texttt{mada} will support the mixture approach of \cite{holling2011likelihood}.
 
 \bibliography{mada}{}
 \bibliographystyle{alpha}
