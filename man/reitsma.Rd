@@ -46,6 +46,8 @@ x \mapsto t_\alpha(x) := \alpha\log(x) - (2-\alpha)\log(1-x).
 Note that for \eqn{\alpha=1}, the default value, the logit transformation results, i.e. the approach of Reitsma et al. (2005). A bivariate random effects model is then fitted to the pairs of transformed sensitivities and false positive rates.
 
 Parameter estimation makes use of the fact that the fixed effect parameters can be profiled in the likelihood. Internally the function \code{\link[mvmeta]{mvmeta}} is called. Currently only standard errors for the fixed effects are available.
+
+If you want other summary points like negative or positive likelihood ratios, see \code{\link{SummaryPts}}.
 }
 \value{
 An object of the class \code{reitsma} for which many standard methods are available. See \code{\link{reitsma-class}} for details.
@@ -68,7 +70,7 @@ Philipp Doebler <philipp.doebler@googlemail.com>
 }
 
 \seealso{
-\code{\link{reitsma-class}}, \code{\link{talpha}}
+\code{\link{reitsma-class}}, \code{\link{talpha}}, \code{\link{SummaryPts}}
 }
 \examples{
 data(Dementia)

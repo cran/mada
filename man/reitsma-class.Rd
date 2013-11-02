@@ -25,12 +25,13 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 \usage{
 \method{print}{reitsma}(x, digits = 4, ...)
 \method{summary}{reitsma}(object, level = 0.95, ...)
-\method{sroc}{reitsma}(fit, fpr = 1:99/100, ...)
+\method{sroc}{reitsma}(fit, fpr = 1:99/100, type = "ruttergatsonis", ...)
 \method{mcsroc}{reitsma}(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...)
 \method{ROCellipse}{reitsma}(x, level = 0.95, add = FALSE, pch = 1, ...)
 \method{crosshair}{reitsma}(x, level = 0.95, length = 0.1, pch = 1, ...)
 \method{plot}{reitsma}(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95, 
-     ylim = c(0,1), xlim = c(0,1), pch = 1, sroclty = 1, sroclwd = 1, ...)
+     ylim = c(0,1), xlim = c(0,1), pch = 1, sroclty = 1, sroclwd = 1, 
+     predict = FALSE, predlty = 3, predlwd = 1, type = "ruttergatsonis", ...)
 }
 \arguments{
   \item{x}{a \code{reitsma} object.}
@@ -50,10 +51,20 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
   \item{pch}{integer, symbol for the pair of mean sensitivity and false positive rate}
   \item{sroclty}{integer, line type of the SROC curve}
   \item{sroclwd}{integer, line width of the SROC curve}  
+  \item{predict}{logical, draw prediction region?}  
+  \item{predlty}{integer, line type of prediction region}
+  \item{predlwd}{integer, line width of prediction region}  
+  \item{type}{character, type of SROC curve to plot. Can be either the generalization of the Rutter \& Gatsonis (2001) SROC curve (see below) or the naive curve implied the bivariate model.}
   \item{...}{arguments to be passed on to other functions}
 }
 \details{
 The confidence regions of \code{ROCellipse} are first calculated as ellipses on logit-ROC space, so the back-transformed regions that are output are not necessarily ellipses. The Monte-Carlo SROC curves are generated from random samples from the fitted model and a \code{\link{lowess}} smooth through them is output. Many computational details are to be found in Doebler et al. (2012).
+
+The \code{summary} function for \code{reitsma} objects also contains the five parameters of the HSROC model by Rutter & Gatsonis (2001) if no regression is performed. These values are calculated by using the formulae from Harbord et al. (2007).
+
+The \code{plot} method for \code{reitsma} objects will plot the generalization of the Rutter-Gatsonis curve.
+
+If you require positive or negative likelihood ratios, you should use \code{\link{SummaryPts}}.
 }
 \value{
 \code{sroc} returns a  matrix ready for plotting. Each row corresponds to one point in ROC space. \code{mcsroc} returns a \code{\link{lowess}} smooth. \code{ROCellipse} returns a list, the first element being a matrix of points in ROC space that delimit the confidence region and the second is the point estimate of the pair of sensitivity and false positive rate in ROC space.
@@ -66,7 +77,7 @@ Philipp Doebler <philipp.doebler@googlemail.com>
 }
 
 \seealso{
-\code{\link{reitsma}}
+\code{\link{reitsma}}, \code{\link{SummaryPts}}
 }
 \examples{
 # load data

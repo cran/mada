@@ -1,3 +1,11 @@
+expit <- function(x){
+  (1+exp(-x))^(-1)
+}
+
+logit <- function(x){
+  log(x/(1-x))
+}
+
 
 CIrho <- function(rho, N, level = 0.95){
   stopifnot(rho < 1, rho > -1, N > 3, round(N) == N)
@@ -31,7 +39,8 @@ checkdata <- function(X, nrowwarn = 5){
   X <- as.data.frame(X)
   if(!all(c("TP","FN","FP","TN") %in% names(X))){
     stop("Data frame or matrix must have columns labelled TP, FN, FP and TN.")}
-  if(!identical(round(X),X)){stop("Data must consist of counts. You might try the round function.")}
+  if(!identical(round(X),as.data.frame(apply(X,2,as.numeric)))){
+    warning("Some of the values of TP,FN,FP or TN do have non zero decimal places. Did you forget to round?")}
   if(nrow(X) < nrowwarn){warning("There are very few primary studies!")}
   return(invisible(NULL))
 }

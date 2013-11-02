@@ -18,7 +18,18 @@ export("sens")
 export("fpr")
 export("spec")
 export("forest")
+export("forestmada")
 export("talpha")
+export("SummaryPts")
+export("mslSROC")
+export("rsSROC")
+
+
+
+S3method(print, SummaryPts)
+S3method(summary, SummaryPts)
+S3method(SummaryPts, default)
+S3method(SummaryPts, reitsma)
 
 S3method(print, reitsma)
 S3method(AUC, reitsma)
@@ -37,7 +48,6 @@ S3method(ROCellipse, reitsma)
 S3method(ROCellipse, default)
 S3method(reitsma, default)
 
-S3method(forest, default)
 S3method(forest, madad)
 S3method(forest, madauni)
 

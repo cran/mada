@@ -22,10 +22,10 @@ data("smoking")
 
 \format{Five data frames. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and is the only one with 5 variables. 
   \describe{
-  \item{TP}{integer. number of true positives}  
-  \item{FN}{integer. number of false negatives}  
-  \item{FP}{integer. number of false positives}  
-  \item{TN}{integer. number of true negatives}  
+  \item{TP}{numeric. number of true positives}  
+  \item{FN}{numeric. number of false negatives}  
+  \item{FP}{numeric. number of false positives}  
+  \item{TN}{numeric. number of true negatives}  
   \item{type}{factor. self-administered or interviewer-administered questionnaire}
   }
 }

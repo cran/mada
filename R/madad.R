@@ -1,6 +1,7 @@
 # function, output of class "madad"
 madad <- function(x=NULL, TP, FN, FP, TN, level = 0.95, correction = 0.5, 
-                         correction.control = "all", method = "wilson", yates = TRUE, ...){
+                         correction.control = "all", method = "wilson", 
+                  yates = TRUE, suppress = TRUE, ...){
   if(is.data.frame(x)){names <- x$names}else{names <- NULL}
   alpha<-1-level
 	kappa<-qnorm((1-alpha/2))
@@ -66,11 +67,24 @@ madad <- function(x=NULL, TP, FN, FP, TN, level = 0.95, correction = 0.5,
 	DOR.ci<-DOR*DOR.ci
   colnames(DOR.ci) <- c(paste(100*alpha/2, "%", sep="", collapse = ""), paste(100*(1-alpha/2), "%", sep="", collapse = ""))
   
+  
+  sens.htest <- switch(suppress, 
+                       suppressWarnings(prop.test(TP, number.of.pos, 
+                                                  correct = yates)),
+                       prop.test(TP, number.of.pos, correct = yates))
+                       
+                       
+  spec.htest <- switch(suppress, 
+                       suppressWarnings(prop.test(TN, number.of.neg, 
+                                                  correct = yates)),
+                       prop.test(TN, number.of.neg, 
+                                 correct = yates))
+  
   output <- list(sens = list(sens = sens, sens.ci = sens.ci),
                  spec = list(spec = spec, spec.ci = spec.ci),
                  fpr = list(fpr = fpr, fpr.ci = fpr.ci),
-                 sens.htest = prop.test(TP, number.of.pos, correct = yates),
-                 spec.htest = prop.test(TN, number.of.neg, correct = yates),
+                 sens.htest = sens.htest,
+                 spec.htest = spec.htest,
                  posLR = list(posLR = posLR, posLR.ci = posLR.ci, se.lnposLR = se.lnposLR),
                  negLR = list(negLR = negLR, negLR.ci = negLR.ci, se.lnnegLR = se.lnnegLR),
                  DOR = list(DOR = DOR, DOR.ci = DOR.ci, se.lnDOR = se.lnDOR),

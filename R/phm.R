@@ -1,37 +1,52 @@
-phm <- function(x, ...)UseMethod("phm")
+phm <- function(data, ...)UseMethod("phm")
 
-phm.default <- function(x=NULL, TP, FN, FP, TN, 
+phm.default <- function(data = NULL, subset=NULL, 
+                        TP="TP", FN="FN", FP="FP", TN="TN",  
                         correction = 0.5, correction.control = "all", 
                         hetero = TRUE, estimator = "APMLE", l = 100, ...){  
   if(estimator == "APMLE"){estimator <- "Adjusted Profile Maximum Likelihood"}
   DNAME <- deparse(substitute(x))
-  if(!is.null(x)){
-    X <- as.data.frame(x)
-    origdata <- X
-    TP <- X$TP
-    FN <- X$FN
-    FP <- X$FP
-    TN <- X$TN
+ 
+  
+  stopifnot(is.numeric(correction), 0 <= correction,  
+            correction.control %in% c("all", "single", "none"),
+            is.numeric(TP) | (is.character(TP) & length(TP) == 1),
+            is.numeric(FP) | (is.character(FP) & length(FP) == 1),
+            is.numeric(TN) | (is.character(TN) & length(TN) == 1),
+            is.numeric(FN) | (is.character(FN) & length(FN) == 1))
+  
+  if(!is.null(data) & is.character(c(TP,FP,TN,FN))){
+    X <- as.data.frame(data)
+    origdata <- data
+    TP <- getElement(X,TP)
+    FN <- getElement(X,FN)
+    FP <- getElement(X,FP)
+    TN <- getElement(X,TN)
   }
-  if(is.null(x)){origdata <- data.frame(TP = TP, FN = FN, FP = FP, TN = TN)}
-
-  checkdata(origdata)
+  
+  if(is.null(data) & !is.character(c(TP,FP,TN,FN))){
+    origdata <- data.frame(TP = TP, FN = FN, FP = FP, TN = TN)
+  }
+  
+  freqdata <- cbind(TP,FN,FP,TN)
+  checkdata(freqdata)
   
   k <- length(TP)  
-
+  
   ## apply continuity correction to _all_ studies if one contains zero
-  if(correction.control == "all"){if(any(c(TP,FN,FP,TN) == 0)){TP <- TP+correction;
-  						FN <- FN + correction;
-							FP <- FP + correction;
-							TN <- TN + correction}}
+  if(correction.control == "all"){if(any(c(TP,FN,FP,TN) == 0))
+  {TP <- TP + correction;
+   FN <- FN + correction;
+   FP <- FP + correction;
+   TN <- TN + correction}}
   if(correction.control == "single"){
-	  correction = ((((TP == 0)|(FN == 0))|(FP == 0))| (TN == 0))*correction
+    correction = ((((TP == 0)|(FN == 0))|(FP == 0))| (TN == 0)) * 
+      correction
     TP <- correction + TP
-	  FN <- correction + FN
-	  FP <- correction + FP
-	  TN <- correction + TN
-	}
-
+    FN <- correction + FN
+    FP <- correction + FP
+    TN <- correction + TN
+  }
 
   theta_A=numeric(l)
 	tau_sq_A=numeric(l)

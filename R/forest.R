@@ -15,7 +15,7 @@ forest.madad <- function(x, type = "sens", log = FALSE, ...){
   if(type == "negLR"){ci <- d$negLR$negLR.ci
                       x <- d$negLR$negLR}
   if(log){x <- log(x); ci <- log(ci)}
-  forest.default(x,ci, snames = d$names, ...)
+  forestmada(x,ci, ...)
 }
 
 forest.madauni <- function(x, log = TRUE, ...){
@@ -45,11 +45,11 @@ forest.madauni <- function(x, log = TRUE, ...){
           forest.ci <- log(forest.ci)
           xlab <- paste("log", xlab)}
     
-  forest.default(x = forest.x, ci = forest.ci, snames = snames, 
+  forestmada(x = forest.x, ci = forest.ci, snames = snames, 
                  xlab = xlab, cipoly = c(rep(FALSE, descr$nobs), TRUE), ...)
 }
 
-forest.default <- 
+forestmada <- 
 function(x, ci, plotci = TRUE, main = "Forest plot", xlab = NULL,
           digits = 2L,  snames = NULL, 
           subset = NULL, pch = 15, cex = 1, cipoly = NULL, polycol = NA,

@@ -1,6 +1,6 @@
 sroc <- function(fit, ...) UseMethod("sroc")
 
-### calculate sroc curves
+### calculate naive sroc curves
 calc.sroc <- function(fpr, alpha.sens, alpha.fpr, mu1, mu2, sigma2, sigma){
   theta <- sigma/sigma2
   return(mada:::inv.trafo(alpha.sens, (mu1 - theta*mu2) + theta*mada:::trafo(alpha.fpr,fpr)))

@@ -1,6 +1,6 @@
 \name{forest}
 \alias{forest}
-\alias{forest.default}
+\alias{forestmada}
 \alias{forest.madad}
 \alias{forest.madauni}
 
@@ -10,17 +10,17 @@
 Forest plot for univariate measures
 }
 \description{
-Produce a forest plot. Includes graphical summary of results if applied to output of suitable model-fitting function.
+Produce a forest plot. Includes graphical summary of results if applied to output of suitable model-fitting function. \code{forest} methods for \code{\link{madad}} and \code{\link{madauni}} objects are provided.
 }
 \usage{
-\method{forest}{default}(x, ci, plotci = TRUE, main = "Forest plot", 
-          xlab = NULL, digits = 2L,  snames = NULL, subset = NULL, 
-          pch = 15, cex = 1, cipoly = NULL, polycol = NA, ...)
 \method{forest}{madad}(x, type = "sens", log = FALSE, ...)
 \method{forest}{madauni}(x, log = TRUE, ...)
+forestmada(x, ci, plotci = TRUE, main = "Forest plot", xlab = NULL,
+          digits = 2L,  snames = NULL, subset = NULL, pch = 15, 
+          cex = 1, cipoly = NULL, polycol = NA, ...) 
 }
 \arguments{
-\item{x}{for the default method: vector of effect sizes; object of suitable class (\code{\link{madad}}, \code{\link{madauni}}) otherwise.}
+\item{x}{an object for which a \code{forest} method exists or (in the case of \code{foresmada}) a vector of point estimates.}
 \item{ci}{numeric matrix, each row corresponds to a confidence interval (the first column being the lower bound and the second the upper).}
 \item{plotci}{logical, should the effects sizes and their confidence intervals be added to the plot (as text)?}
 \item{main}{character, heading of plot.}
@@ -34,10 +34,10 @@ Produce a forest plot. Includes graphical summary of results if applied to outpu
 \item{polycol}{color of the polygon(s), passed on to \code{\link{polygon}}. The default value of \code{NA} implies no color.}
 \item{type}{character, one of \code{sens}, \code{spec}, \code{negLR}, \code{posLR} or \code{DOR}.}
 \item{log}{logical, should the log-transformed values be plotted?}
-\item{...}{arguments to be passed on to \code{forest.default} and further on to other plotting functions}
+\item{...}{arguments to be passed on to \code{forestmada} and further on to other plotting functions}
 }
 \details{
-Produces a forest plot to graphically assess heterogeneity.
+Produces a forest plot to graphically assess heterogeneity. Note that \code{forestmada} is called internally, so that the \code{...} argument can be used to pass on arguments to this function; see the examples. 
 }
 \value{
 Returns and invisible \code{NULL}.
@@ -68,12 +68,18 @@ old.par <- par()
 AuditC.d <- madad(AuditC)
 
 plot.new()
-par(fig = c(0, 0.5, 0, 1), pty = "s", new = TRUE)
+par(fig = c(0, 0.5, 0, 1), new = TRUE)
 forest(AuditC.d, type = "sens", xlab = "Sensitivity")
-par(fig = c(0.5, 1, 0, 1), pty = "s", new = TRUE)
+par(fig = c(0.5, 1, 0, 1),  new = TRUE)
 forest(AuditC.d, type = "spec", xlab = "Specificity")
 
 par(old.par)
+
+## Including study names
+## Using Letters as dummies
+forest(AuditC.d, type = "spec",  xlab = "Specificity",
+      snames = LETTERS[1:14])
+
 }
 
 \keyword{hplot}

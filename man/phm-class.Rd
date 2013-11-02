@@ -60,7 +60,7 @@ where \eqn{a} is the lower bound of the observed false positive rates and \eqn{b
 \value{
 The \code{sroc} function returns a matrix ready for plotting. Each row corresponds to one point in ROC space.}
 \references{
-Boehning D., Boehning, W., Holling, H., Doebler, P. (2012) \dQuote{Meta-Analysis of Diagnostic Studies based upon SROC-Curves: a Mixed Model Approach using a Proportional Hazards Model.} \emph{submitted}
+ Holling, H., Boehning D., Boehning, W. (2012) \dQuote{Meta-Analysis of Diagnostic Studies based upon SROC-Curves: a Mixed Model Approach using a Proportional Hazards Model.} \emph{Statistical Modelling}, \bold{12}, 347--375.
 }
 
 \author{
