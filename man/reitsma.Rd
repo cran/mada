@@ -34,7 +34,7 @@ reitsma(data, ...)
  \item{alphafpr}{Transformation parameter for (continuity corrected) false positive rates, see details}
   \item{correction}{numeric, continuity correction applied if zero cells}
   \item{correction.control}{character, if set to \code{"all"} (the default) the continuity correction is added to the whole data if only one cell in one study is zero. If set to \code{"single"} the correction is only applied to rows of the data which have a zero.}
-  \item{method}{character, either \code{"fixed"}, \code{"ml"} or \code{"reml"} (the default)}
+  \item{method}{character, either \code{"fixed"}, \code{"ml"}, \code{"mm"}, \code{"vc"} or \code{"reml"} (the default)}
   \item{control}{a list of control parameters, see the documentation of \code{\link[mvmeta]{mvmeta}}}.
   \item{...}{arguments to be passed on to other functions, currently ignored}
 }
@@ -45,7 +45,7 @@ x \mapsto t_\alpha(x) := \alpha\log(x) - (2-\alpha)\log(1-x).
 }
 Note that for \eqn{\alpha=1}, the default value, the logit transformation results, i.e. the approach of Reitsma et al. (2005). A bivariate random effects model is then fitted to the pairs of transformed sensitivities and false positive rates.
 
-Parameter estimation makes use of the fact that the fixed effect parameters can be profiled in the likelihood. Internally the function \code{\link[mvmeta]{mvmeta}} is called. Currently only standard errors for the fixed effects are available.
+Parameter estimation makes use of the fact that the fixed effect parameters can be profiled in the likelihood. Internally the function \code{\link[mvmeta]{mvmeta}} is called. Currently only standard errors for the fixed effects are available. Note that when using \code{method = "mm"} or \code{method = "vc"}, no likelihood can be computed and hence no AIC or BIC values.
 
 If you want other summary points like negative or positive likelihood ratios, see \code{\link{SummaryPts}}.
 }

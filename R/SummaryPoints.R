@@ -3,8 +3,8 @@ SummaryPts <-function(object, ...) UseMethod("SummaryPts")
 SummaryPts.default <- function(object, mu,Sigma,alphasens = 1, alphafpr = 1,
                            n.iter = 10^6, FUN, ...){
   samples <- rmvnorm(n.iter, mu, Sigma)
-  sens <- mada:::inv.trafo(alphasens,samples[,1])
-  fpr <- mada:::inv.trafo(alphafpr,samples[,2])
+  sens <- inv.trafo(alphasens,samples[,1])
+  fpr <- inv.trafo(alphafpr,samples[,2])
   out <- lapply(FUN, function(x){x(sens, fpr)})
   class(out) <- "SummaryPts"
   out

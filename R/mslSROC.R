@@ -72,9 +72,9 @@ mslSROC <- function(data = NULL, subset=NULL,
     fpr <- fpr[cut(fpr,bound, "withinbound") == "withinbound"]  
   }  
     
-  senstrafo <- function(x){return(mada:::talpha(alphasens)$linkfun(x))}
-  fprtrafo <- function(x){return(mada:::talpha(alphafpr)$linkfun(x))}
-  sensinvtrafo <- function(x){return(mada:::talpha(alphasens)$linkinv(x))}
+  senstrafo <- function(x){return(talpha(alphasens)$linkfun(x))}
+  fprtrafo <- function(x){return(talpha(alphafpr)$linkfun(x))}
+  sensinvtrafo <- function(x){return(talpha(alphasens)$linkinv(x))}
   
   z <- fprtrafo(FPR)
   y <- senstrafo(SENS)  

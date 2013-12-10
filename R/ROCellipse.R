@@ -35,28 +35,30 @@ ROCellipse.default <- function(x, correction = 0.5, level = 0.95,
 }
 
 
-ROC.ellipse2 <- function(fit, nobs, conf.level = 0.95, pch = 1, add = TRUE, ...)
+ROC.ellipse2 <- function(fit, conf.level = 0.95, pch = 1, add = TRUE, ...)
 {
-  if(is.null(nobs)){stop("number of observations (nobs) is missing")}
   alpha.sens <- fit$alphasens
   alpha.fpr <- fit$alphafpr
   mu <- fit$coefficients["(Intercept)",]
-  Sigma <- fit$Psi/nobs
+  Sigma <- vcov(fit)
+  vcov_names <- colnames(Sigma)
+  idx_intercepts <- grepl(".(Intercept)", vcov_names)
+  Sigma <- Sigma[idx_intercepts, idx_intercepts]
   talphaellipse <- ellipse(Sigma, centre = mu, level = conf.level)
   
   ROCellipse <- matrix(0, ncol = 2, nrow = nrow(talphaellipse))
   
-  ROCellipse[,1] <- mada:::inv.trafo(alpha.fpr, talphaellipse[,2])
-  ROCellipse[,2] <- mada:::inv.trafo(alpha.sens, talphaellipse[,1])
+  ROCellipse[,1] <- inv.trafo(alpha.fpr, talphaellipse[,2])
+  ROCellipse[,2] <- inv.trafo(alpha.sens, talphaellipse[,1])
   if(add){
     lines(ROCellipse, ...)
-    points(mada:::inv.trafo(alpha.fpr, mu[2]), 
-           mada:::inv.trafo(alpha.sens, mu[1]), pch = pch, ...)
+    points(inv.trafo(alpha.fpr, mu[2]), 
+           inv.trafo(alpha.sens, mu[1]), pch = pch, ...)
     return(invisible(NULL))
     }
   if(!add){
     return(list(ROCellipse = ROCellipse, 
-                fprsens = matrix(c(mada:::inv.trafo(alpha.fpr, mu[2]), 
-                                   mada:::inv.trafo(alpha.sens, mu[1])),nrow = 1)))
+                fprsens = matrix(c(inv.trafo(alpha.fpr, mu[2]), 
+                                   inv.trafo(alpha.sens, mu[1])),nrow = 1)))
   }
 }

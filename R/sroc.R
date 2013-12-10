@@ -3,7 +3,7 @@ sroc <- function(fit, ...) UseMethod("sroc")
 ### calculate naive sroc curves
 calc.sroc <- function(fpr, alpha.sens, alpha.fpr, mu1, mu2, sigma2, sigma){
   theta <- sigma/sigma2
-  return(mada:::inv.trafo(alpha.sens, (mu1 - theta*mu2) + theta*mada:::trafo(alpha.fpr,fpr)))
+  return(inv.trafo(alpha.sens, (mu1 - theta*mu2) + theta*trafo(alpha.fpr,fpr)))
 }
 
 sroc2 <- function(fit, fpr = 1:99/100){
@@ -28,8 +28,8 @@ mcsroc<- function(fit, replications = 10000, lambda = 100){
   mu <- estimate[1:2]
   Sigma <- fit$Psi
   stud.pars <- rmvnorm(replications, mu, Sigma)
-  sens <- mada:::inv.trafo(alpha.sens, stud.pars[,1])
-  fpr <- mada:::inv.trafo(alpha.fpr, stud.pars[,2])
+  sens <- inv.trafo(alpha.sens, stud.pars[,1])
+  fpr <- inv.trafo(alpha.fpr, stud.pars[,2])
   N.sens <- rpois(replications, lambda)
   N.fpr <- rpois(replications, lambda)
   TN <- rbinom(replications, N.sens, sens)
