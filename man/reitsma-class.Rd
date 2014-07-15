@@ -24,8 +24,8 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 }
 \usage{
 \method{print}{reitsma}(x, digits = 4, ...)
-\method{summary}{reitsma}(object, level = 0.95, ...)
-\method{sroc}{reitsma}(fit, fpr = 1:99/100, type = "ruttergatsonis", ...)
+\method{summary}{reitsma}(object, level = 0.95, sroc.type = "ruttergatsonis", ...)
+\method{sroc}{reitsma}(fit, fpr = 1:99/100, type = "ruttergatsonis", return_function = FALSE, ...)
 \method{mcsroc}{reitsma}(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...)
 \method{ROCellipse}{reitsma}(x, level = 0.95, add = FALSE, pch = 1, ...)
 \method{crosshair}{reitsma}(x, level = 0.95, length = 0.1, pch = 1, ...)
@@ -39,6 +39,8 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 \item{fit}{a \code{reitsma} object.}
 \item{digits}{number of decimal digits to print.}
   \item{level}{numeric, the level for calculations of confidence intervals (\code{summary}) or regions (\code{ROCellipse})}
+    \item{sroc.type}{character, which SROC curve should be used to calculate the AUC in the summary? Besides the default \code{ruttergatsonis} the option \code{naive} is available.}
+    \item{return_function}{logical. Should a function on ROC space be returned or the values at the points given by \code{fpr}?}
   \item{fpr}{numeric, the false positives rates for which to calculate the predicted sensitivities}
   \item{replications}{integer, the number of replications for the Monte-Carlo SROC curve}
   \item{lambda}{numeric, the parameter lambda of the Monte-Carlo run, see details}
@@ -54,7 +56,7 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
   \item{predict}{logical, draw prediction region?}  
   \item{predlty}{integer, line type of prediction region}
   \item{predlwd}{integer, line width of prediction region}  
-  \item{type}{character, type of SROC curve to plot. Can be either the generalization of the Rutter \& Gatsonis (2001) SROC curve (see below) or the naive curve implied the bivariate model.}
+  \item{type}{character, type of SROC curve to plot. Can be either the generalization of the Rutter & Gatsonis (2001) SROC curve (see below) or the naive curve implied the bivariate model.}
   \item{...}{arguments to be passed on to other functions}
 }
 \details{

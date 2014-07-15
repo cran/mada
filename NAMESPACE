@@ -61,3 +61,6 @@ S3method(plot, phm)
 S3method(phm, default)
 S3method(AUC, phm)
 
+import(ellipse)
+import(mvmeta)
+import(mvtnorm)

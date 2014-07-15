@@ -42,6 +42,10 @@ checkdata <- function(X, nrowwarn = 5){
   if(!identical(round(X),as.data.frame(apply(X,2,as.numeric)))){
     warning("Some of the values of TP,FN,FP or TN do have non zero decimal places. Did you forget to round?")}
   if(nrow(X) < nrowwarn){warning("There are very few primary studies!")}
+  idx_too_many_zeroes <- apply(X,1,function(x){sum(x == 0)}) > 2
+  if(any(idx_too_many_zeroes)){
+    stop(paste("Some study with three or more zeroes in 2x2 table! Row:", which(idx_too_many_zeroes)))
+  }
   return(invisible(NULL))
 }
 

@@ -132,8 +132,9 @@ print.reitsma <- function (x, digits = 4, ...)
 }
 
 summary.reitsma <- 
-function (object, level = 0.95, ...) 
+function (object, level = 0.95, sroc.type = "ruttergatsonis", ...) 
 {
+  stopifnot(sroc.type %in% c("naive", "ruttergatsonis"))
   ci.level <- level
   if (ci.level <= 0 || ci.level >= 1) 
     stop("'ci.level' must be within 0 and 1")
@@ -169,24 +170,15 @@ function (object, level = 0.95, ...)
   ran.sd <- sqrt(diag(Psi))
   corRandom <- Psi/outer(ran.sd, ran.sd)
 #  qstat <- unclass(qtest(object))  
-  if(attr(object$logLik,"df")== 5){AUC <- AUC(object)}else{AUC <- NULL}
   
+  coef_hsroc <- calc_hsroc_coef(object)
+
   if(attr(object$logLik,"df")== 5){
-  ## HSROC parameters (formulae from Harbord et al)
-  Theta <- 0.5*(sqrt(ran.sd[2]/ran.sd[1])*coef[1] + sqrt(ran.sd[1]/ran.sd[2])*coef[2]) ##coef[2] is the fpr, so need to change sign!
-  Lambda <- sqrt(ran.sd[2]/ran.sd[1])*coef[1] - sqrt(ran.sd[1]/ran.sd[2])*coef[2] ##coef[2] is the fpr, so need to change sign!
-  sigma2theta <- 0.5*(ran.sd[1]*ran.sd[2] + Psi[1,2]) ##coef[2] is the fpr, so need to change sign of Psi[1,2] as well!
-  sigma2alpha <- 2*(ran.sd[1]*ran.sd[2] - Psi[1,2])  ##coef[2] is the fpr, so need to change sign of Psi[1,2] as well!
-  beta <- log(ran.sd[2]/ran.sd[1])             
-    coef_hsroc <- list(Theta = Theta,
-                       Lambda = Lambda,
-                       beta = beta,
-                       sigma2theta = sigma2theta,
-                       sigma2alpha = sigma2alpha)
-  coef_hsroc <- lapply(coef_hsroc, function(x){attr(x, "names") <- NULL; x})
-  }else{
-    coef_hsroc = NULL
-  }
+    AUC <- AUC.reitsma(object, sroc.type = sroc.type)
+      }else{
+    AUC <- NULL}
+
+
   keep <- match(c("vcov", "Psi", "df.res", "rank", "logLik", 
                   "converged", "dim", "df", "lab", "na.action", "call", 
                   "terms", "method", "alphasens", "alphafpr"), names(object), 0L)
@@ -273,17 +265,32 @@ vcov.reitsma <- function(object, ...){object$vcov}
 
 logLik.reitsma <- function(object, ...){object$logLik}
 
-sroc.reitsma <- function(fit, fpr = 1:99/100, type = "ruttergatsonis", ...){
+sroc.reitsma <- function(fit, fpr = 1:99/100, type = "ruttergatsonis",
+                         return_function = FALSE, ...){
+  stopifnot(is.logical(return_function))
   stopifnot(type %in% c("ruttergatsonis", "naive"))
-  if(type == "naive"){return(sroc2(fit, fpr=fpr, ...))}
   if(type == "ruttergatsonis"){
-    sum_fit <- summary(fit)
-    Lambda <- summary(fit)$coef_hsroc$Lambda    
-    Beta <- summary(fit)$coef_hsroc$beta    
-    return(cbind(fpr, 
-#      sens = (1+exp(-Lambda*exp(-0.5*Beta)-exp(-Beta)*log(fpr/(1-fpr))))^(-1)))                 
-      sens = inv.trafo(fit$alphasens, (Lambda*exp(-Beta/2) + 
-          exp(-Beta)*trafo(fit$alphafpr, fpr)))))
+    coef_hsroc <- calc_hsroc_coef(fit)
+  }
+  if(type == "naive"){
+    f <- function(x){return(sroc2(fit, fpr=x, ...)[,2])}
+    if(!return_function){
+      return(cbind(fpr, f(fpr)))
+    }else{
+      return(f)
+    }
+  }
+  if(type == "ruttergatsonis"){
+    Lambda <- coef_hsroc$Lambda    
+    Beta <- coef_hsroc$beta
+    f <- function(x){
+      return(inv.trafo(fit$alphasens, (Lambda*exp(-Beta/2) + exp(-Beta)*trafo(fit$alphafpr, x))))
+    }
+    if(!return_function){
+      return(cbind(fpr, f(fpr)))
+    }else{
+      return(f)
+    }
   }
 }
 
@@ -368,17 +375,13 @@ confint.reitsma <- function (object, parm, level = 0.95, ...)
   ci
 }
 
-
-AUC.reitsma <- function(x, fpr = 1:99/100, ...){
+AUC.reitsma <- function(x, fpr = 1:99/100, 
+                        sroc.type = "ruttergatsonis",
+                        ...){
+  stopifnot(sroc.type %in% c("naive", "ruttergatsonis"))
   if(!attr(x$logLik,"df") == 5){stop("AUC can not be calculated for meta-regression")}
-  estimate <- x$coefficients
-  alpha.sens <- x$alphasens
-  alpha.fpr <- x$alphafpr
-  mu1 <- estimate[1]
-  mu2 <- estimate[2]
-  sigma2 <- x$Psi[2,2]
-  sigma <- x$Psi[1,2]  
-  rsroc <- function(x){calc.sroc(x, alpha.sens, alpha.fpr, mu1, mu2, sigma2, sigma)}
+  rsroc <- sroc.reitsma(x, type = sroc.type,
+                        return_function = TRUE)
   AUC <- AUC.default(rsroc, fpr = fpr, ...)
   obsfprrange <- range(fpr(x$freqdata))
   obsfprrange[1] <- max(0.01,obsfprrange[1])
@@ -386,7 +389,36 @@ AUC.reitsma <- function(x, fpr = 1:99/100, ...){
   obsfpr <- seq(from = obsfprrange[1], to = obsfprrange[2], length.out = 99)
   pAUC <- AUC.default(rsroc, fpr = obsfpr, ...)
   names(pAUC) <- c("pAUC")
-  return(c(AUC,pAUC))
+  res <- c(AUC,pAUC)
+  attr(res, "sroc.type") <- sroc.type
+  return(res)
 }
 
+calc_hsroc_coef <- function(fit){
+  coef <- fit$coefficients
+  coef <- as.numeric(coef)
+  Psi <- fit$Psi  
+  ran.sd <- sqrt(diag(Psi))
+  
+  if(attr(fit$logLik,"df")== 5){
+    ## HSROC parameters (formulae from Harbord et al)
+    Theta <- 0.5*(sqrt(ran.sd[2]/ran.sd[1])*coef[1] + sqrt(ran.sd[1]/ran.sd[2])*coef[2]) ##coef[2] is the fpr, so need to change sign!
+    Lambda <- sqrt(ran.sd[2]/ran.sd[1])*coef[1] - sqrt(ran.sd[1]/ran.sd[2])*coef[2] ##coef[2] is the fpr, so need to change sign!
+    sigma2theta <- 0.5*(ran.sd[1]*ran.sd[2] + Psi[1,2]) ##coef[2] is the fpr, so need to change sign of Psi[1,2] as well!
+    sigma2alpha <- 2*(ran.sd[1]*ran.sd[2] - Psi[1,2])  ##coef[2] is the fpr, so need to change sign of Psi[1,2] as well!
+    beta <- log(ran.sd[2]/ran.sd[1])             
+    coef_hsroc <- list(Theta = Theta,
+                       Lambda = Lambda,
+                       beta = beta,
+                       sigma2theta = sigma2theta,
+                       sigma2alpha = sigma2alpha)
+    coef_hsroc <- lapply(coef_hsroc, function(x){attr(x, "names") <- NULL; x})
+  }else{
+    coef_hsroc = NULL
+  }
+  if(is.null(coef_hsroc)){
+    warning("Can only compute coefficients for SROC curves without covariates. Returning NULL.")
+  }
+  return(coef_hsroc)
+}
 

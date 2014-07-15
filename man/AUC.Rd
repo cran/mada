@@ -14,13 +14,14 @@ Calculates the area under the curve given a function or a fitted model.
 \usage{
 \method{AUC}{default}(x, fpr = 1:99/100, ...)
 \method{AUC}{phm}(x, level = 0.95, ...)
-\method{AUC}{reitsma}(x, fpr = 1:99/100, ...)
+\method{AUC}{reitsma}(x, fpr = 1:99/100, sroc.type = "ruttergatsonis", ...)
 }
 \arguments{
   \item{x}{a function with range and domain in ROC space (default method) or an object of class \code{\link{phm}} or \code{\link{reitsma}}.}
   \item{fpr}{numeric vector, points on which the (S)ROC curve is evaluated}
   \item{level}{numeric, confidence level for the calculations of confidence intervals.
 }
+  \item{sroc.type}{character, which SROC curve should be used to calculate the AUC? Besides the default \code{ruttergatsonis} the option \code{naive} is available.}
   \item{\dots}{further arguments, currently not used.}
 }
 
