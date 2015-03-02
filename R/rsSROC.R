@@ -1,4 +1,4 @@
-## Rücker Schumacher
+## Ruecker Schumacher
 rsSROC <- function(data = NULL, subset=NULL,
   TP="TP", FN="FN", FP="FP", TN="TN", 
   lambda = "from_bivariate",                  

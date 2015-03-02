@@ -171,12 +171,13 @@ function (object, level = 0.95, sroc.type = "ruttergatsonis", ...)
   corRandom <- Psi/outer(ran.sd, ran.sd)
 #  qstat <- unclass(qtest(object))  
   
-  coef_hsroc <- calc_hsroc_coef(object)
 
   if(attr(object$logLik,"df")== 5){
     AUC <- AUC.reitsma(object, sroc.type = sroc.type)
+    coef_hsroc <- calc_hsroc_coef(object)
       }else{
-    AUC <- NULL}
+    AUC <- NULL
+    coef_hsroc <- NULL}
 
 
   keep <- match(c("vcov", "Psi", "df.res", "rank", "logLik", 
@@ -422,3 +423,54 @@ calc_hsroc_coef <- function(fit){
   return(coef_hsroc)
 }
 
+
+anova.reitsma <- function(object, fit2, ...){
+  fit1 <- object
+  if(!(class(fit1) == "reitsma" & class(fit2) == "reitsma")){
+    stop("This function is only for models of class 'reitsma'.")
+  }
+  if(!(fit1$method == "ml" & fit2$method == "ml")){
+    stop("Both models have to be fitted with maximum likelihood. Set method = 'ml' in reitsma.")
+  if(!(identical(fit1$data, fit2$data))){
+    stop("Both models have to be fitted to the same data set.")
+  }
+  if(!(fit1$nobs == fit2$nobs)){
+    stop("Both models have to be fitted to the same number of primary studies. Make sure missing data did not lead to the omission of studies.")
+  }
+  }
+  df1 <- fit1$df$fixed
+  df2 <- fit2$df$fixed
+  df_diff <- df1 - df2
+  if(df_diff == 0){stop("Models have the same degrees of freedom, so they cannot be nested!")}
+  logLik_diff <- fit1$logLik - fit2$logLik
+  if((df_diff > 0 & logLik_diff < 0) | (df_diff < 0 & logLik_diff > 0)){
+    stop("log-likelihoods not consistent, models probably not nested")}
+  out <- c(2*abs(logLik_diff), abs(df_diff),
+           pchisq(2*abs(logLik_diff), abs(df_diff), lower.tail = FALSE))
+  names(out) <- c("Chi-squared", "Df", "Pr(>Chi-squared)")
+  out <- list(statistic = out, fit1 = fit1, fit2 = fit2)
+  class(out) <- "anova.reitsma"
+  out
+}
+
+print.anova.reitsma <- function(x, digits = 4, ...){
+  cat("Likelihood-ratio test \n")
+  cat("Model 1: ")
+  print(x$fit1$formula)
+  cat("Model 2: ")
+  print(x$fit2$formula)
+  cat("\n")
+  ret <- data.frame(ChiSquared = x$statistic[1], 
+                    Df = x$statistic[2], 
+                    x$statistic[3])
+  names(ret)[3] <- "Pr(>ChiSquared)"
+  rownames(ret) <- ""
+  printCoefmat(ret, 
+               digits = digits,
+               tst.ind = 1,
+               zap.ind = 2,
+               P.values = TRUE,
+               has.Pvalue = TRUE,
+               cs.ind = NULL)
+  return(invisible(x))
+}

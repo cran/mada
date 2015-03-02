@@ -9,6 +9,8 @@
 \alias{plot.reitsma}
 \alias{summary.reitsma}
 \alias{print.reitsma}
+\alias{anova.reitsma}
+\alias{print.anova.reitsma}
 
 \concept{random effects model}
 \concept{SROC curve}
@@ -32,11 +34,14 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 \method{plot}{reitsma}(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95, 
      ylim = c(0,1), xlim = c(0,1), pch = 1, sroclty = 1, sroclwd = 1, 
      predict = FALSE, predlty = 3, predlwd = 1, type = "ruttergatsonis", ...)
+\method{anova}{reitsma}(object, fit2, ...)
+\method{print}{anova.reitsma}(x, digits = 4, ...)
 }
 \arguments{
   \item{x}{a \code{reitsma} object.}
   \item{object}{a \code{reitsma} object.}
 \item{fit}{a \code{reitsma} object.}
+\item{fit2}{a \code{reitsma} object.}
 \item{digits}{number of decimal digits to print.}
   \item{level}{numeric, the level for calculations of confidence intervals (\code{summary}) or regions (\code{ROCellipse})}
     \item{sroc.type}{character, which SROC curve should be used to calculate the AUC in the summary? Besides the default \code{ruttergatsonis} the option \code{naive} is available.}

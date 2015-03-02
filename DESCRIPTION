@@ -1,18 +1,15 @@
 Package: mada
 Type: Package
-Title: Meta-Analysis of Diagnostic Accuracy (mada)
-Version: 0.5.6
-Date: 2014-15-07
+Title: Meta-Analysis of Diagnostic Accuracy
+Version: 0.5.7
+Date: 2015-03-02
 Author: Philipp Doebler
 Maintainer: Philipp Doebler <philipp.doebler@googlemail.com>
-Description: This package provides functions for diagnostic meta-analysis. Next to basic analysis and visualization the bivariate Model of Reitsma et al. (2005) that is equivalent to the HSROC of Rutter&Gatsonis (2001) can be fitted. A new approach based to diagnostic meta-analysis of Holling et al. (2012) is also available. Standard methods like summary, plot and so on are provided.
+Description: Provides functions for diagnostic meta-analysis. Next to basic analysis and visualization the bivariate Model of Reitsma et al. (2005) that is equivalent to the HSROC of Rutter&Gatsonis (2001) can be fitted. A new approach based to diagnostic meta-analysis of Holling et al. (2012) is also available. Standard methods like summary, plot and so on are provided.
 Depends: stats, mvtnorm, ellipse, mvmeta
 License: GPL-2
 URL: r-forge.r-project.org/projects/mada/
-Repository: CRAN
-Repository/R-Forge/Project: mada
-Repository/R-Forge/Revision: 78
-Repository/R-Forge/DateTimeStamp: 2014-07-15 13:43:23
-Date/Publication: 2014-07-23 23:44:13
-Packaged: 2014-07-15 14:15:54 UTC; rforge
+Packaged: 2015-02-05 12:01:38 UTC; philipp
 NeedsCompilation: no
+Repository: CRAN
+Date/Publication: 2015-02-05 14:32:08

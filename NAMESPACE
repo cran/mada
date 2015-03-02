@@ -47,9 +47,17 @@ S3method(crosshair, default)
 S3method(ROCellipse, reitsma)
 S3method(ROCellipse, default)
 S3method(reitsma, default)
+S3method(anova, reitsma)
+S3method(print, anova.reitsma)
 
 S3method(forest, madad)
 S3method(forest, madauni)
+S3method(print, madad)
+S3method(print, madauni)
+S3method(summary, madauni)
+S3method(print, summary.madauni)
+S3method(vcov, madauni)
+
 
 S3method(print, phm)
 S3method(summary, phm)

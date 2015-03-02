@@ -1,5 +1,7 @@
 %\VignetteIndexEntry{Meta-Analysis of Diagnostic Accuracy with mada}
-%\VignetteKeyword{meta-analysis, diagnostic test}
+%\VignetteKeyword{meta-analysis}
+%\VignetteKeyword{diagnostic test}
+
 
 % \documentclass[a4paper]{article}
 % \usepackage{a4wide}
@@ -527,30 +529,46 @@ summary(smoking$type)
 @
 We use the factor \texttt{type} as a covariate in diagnostic meta-regression:
 <<>>=
-fit.smoking <- reitsma(smoking, formula = cbind(tsens, tfpr) ~ type)
+fit.smoking.type <- reitsma(smoking, 
+                            formula = cbind(tsens, tfpr) ~ type)
 @
 Note that the left hand side of the \texttt{formula} object always has to be of the form \texttt{cbind(tsens, tfpr)}, where \texttt{tsens} and \texttt{tfpr} are for \emph{transformed} sensitivity and false positive rate respectively.
 We generate detailed output by:
 <<>>=
-summary(fit.smoking)
+summary(fit.smoking.type)
 @
 This output can be interpreted as follows: The $z$~value for the regression coefficient for the sensitivities is significant, indicating that the interviewer administered questionnaires offer a better sensitivity. Interestingly the point estimate for the  false-positive rates does not indicate any effect.
 
 Note that once meta-regression is used, one cannot reasonably plot SROC curves, since fixed values for the covariates would have to be supplied to do so. Also (global) AUC values do not make sense.
+
+We can also compare the fit of two bivariate meta-regressions with a likelihood-ratio test. For this, we have to refit the models with the maximum likelihood method, as the likelihood-ratio test relies on asymptotic theory that is only valid if this estimation method is employed.
+
+<<>>=
+fit.smoking.ml.type <- reitsma(smoking, 
+                          formula = cbind(tsens, tfpr) ~ type, 
+                          method = "ml")
+fit.smoking.ml.intercept <- reitsma(smoking, 
+                                    formula = cbind(tsens, tfpr) ~ 1,
+                                    method = "ml")
+anova(fit.smoking.ml.type, fit.smoking.ml.intercept)
+@
+The meta-regression confirms that type explains some of the heterogeneity between the primary studies.
 
 \subsection{Transformations beyond the logit}
 All bivariate approaches explained so far use the conventional logit transformation. The \texttt{reitsma} function offers the parametric $t_\alpha$ family \citep{doebler2012mixed} of transformations as alternatives. The family is defined by
 \[
 t_\alpha(x) := \alpha\log(x) - (2-\alpha)\log(1-x),\quad x\in (0,1), \alpha\in [0,2].
 \]
-For $\alpha = 1$, the logit is obtained. In many cases the fit of a bivariate meta-regression can be improved upon by choosing adequate values for $\alpha$. The rational behind this is, that especially sensitivities tend to cluster around values like .95 and the symmetric logit transformation does not necessarily lead to normally distributed transformed proportions. As an example we study the \texttt{smoking} data again:
+For $\alpha = 1$, the logit is obtained. In many cases the fit of a bivariate meta-regression can be improved upon by choosing adequate values for $\alpha$. The rational behind this is, that especially sensitivities tend to cluster around values like .95 and the symmetric logit transformation does not necessarily lead to normally distributed transformed proportions. As an example we study the \texttt{smoking} data again using maximum-likelihood estimation:
 <<>>=
-fit.smoking1 <- reitsma(smoking)
-fit.smoking2 <- reitsma(smoking, alphasens = 0, alphafpr = 2)
+fit.smoking1 <- reitsma(smoking, method = "ml")
+fit.smoking2 <- reitsma(smoking, 
+                        alphasens = 0, alphafpr = 2, 
+                        method = "ml")
 AIC(fit.smoking1)
 AIC(fit.smoking2)
 @
-The lower AIC value indicates, that the fit of the second model is better.
+The lower AIC value indicates, that the fit of the second model is better. Likelihood-ratio tests for this type of transformation are discussed by \citet{doebler2012mixed}.
 
 \section{Further development}
 In the future \pkg{mada} will support the mixture approach of \citet{holling2011likelihood} and Bayesian approaches.
