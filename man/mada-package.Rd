@@ -13,8 +13,8 @@ This package provides functions for diagnostic meta-analysis. Next to basic anal
 \tabular{ll}{
 Package: \tab mada\cr
 Type: \tab Package\cr
-Version: \tab 0.5.4\cr
-Date: \tab 2013-04-06\cr
+Version: \tab 0.5.8\cr
+Date: \tab 2017-10-06\cr
 License: \tab GPL-2\cr
 }
 The package provides tools for the meta-analysis of diagnostic accuracy data. For this the number true positives (TP), false negatives (FN), true negatives (TN) and false postives (FP) for each study must be known. The package can fit the bivariate model of Reitsma et al (2005), a bivariate random effects model. This model has been shown by Harbord et al. (2007) to be equivalent to the HSROC proposed by Rutter & Gatsonis (2001). We approach  this model as a linear mixed effects model to avoid the complications of non-linear mixed effects model. The main function to fit such model is \code{\link{reitsma}} and standard methods are available for the output of this function.

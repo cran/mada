@@ -225,28 +225,33 @@ dev.off()
 
 
 ###################################################
-### code chunk number 30: mada.Rnw:484-488
+### code chunk number 30: mada.Rnw:484-493
 ###################################################
 data("IAQ")
 data("SAQ")
-fit.IAQ <- reitsma(IAQ)
-fit.SAQ <- reitsma(SAQ)
+# both datasets contain more than one 2x2-table per study
+# reduce (somewhat arbitrarily) to one row per study by
+# using the first coded table only:
+IAQ1 <- subset(IAQ, IAQ$result_id == 1)
+SAQ1 <- subset(SAQ, SAQ$result_id == 1)
+fit.IAQ <- reitsma(IAQ1)
+fit.SAQ <- reitsma(SAQ1)
 
 
 ###################################################
-### code chunk number 31: mada.Rnw:491-498
+### code chunk number 31: mada.Rnw:496-503
 ###################################################
 plot(fit.IAQ, xlim = c(0,.5), ylim = c(.5,1),
      main = "Comparison of IAQ and SAQ")
 lines(sroc(fit.SAQ), lty = 2)
 ROCellipse(fit.SAQ, lty = 2, pch = 2, add = TRUE)
-points(fpr(IAQ), sens(IAQ), cex = .5)
-points(fpr(SAQ), sens(SAQ), pch = 2, cex = 0.5)
+points(fpr(IAQ1), sens(IAQ1), cex = .5)
+points(fpr(SAQ1), sens(SAQ1), pch = 2, cex = 0.5)
 legend("bottomright", c("IAQ", "SAQ"), pch = 1:2, lty = 1:2)
 
 
 ###################################################
-### code chunk number 32: mada.Rnw:500-510
+### code chunk number 32: mada.Rnw:505-515
 ###################################################
 pdf(file = "SAQIAQ.pdf", width = 6, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -261,47 +266,49 @@ dev.off()
 
 
 ###################################################
-### code chunk number 33: mada.Rnw:523-524
+### code chunk number 33: mada.Rnw:528-531
 ###################################################
 data("smoking")
+# again reduce to one result per study:
+smoking1 <- subset(smoking, smoking$result_id == 1)
 
 
 ###################################################
-### code chunk number 34: mada.Rnw:527-528
+### code chunk number 34: mada.Rnw:534-535
 ###################################################
-summary(smoking$type)
+summary(smoking1$type)
 
 
 ###################################################
-### code chunk number 35: mada.Rnw:531-533
+### code chunk number 35: mada.Rnw:538-540
 ###################################################
-fit.smoking.type <- reitsma(smoking, 
+fit.smoking.type <- reitsma(smoking1, 
                             formula = cbind(tsens, tfpr) ~ type)
 
 
 ###################################################
-### code chunk number 36: mada.Rnw:537-538
+### code chunk number 36: mada.Rnw:544-545
 ###################################################
 summary(fit.smoking.type)
 
 
 ###################################################
-### code chunk number 37: mada.Rnw:546-553
+### code chunk number 37: mada.Rnw:553-560
 ###################################################
-fit.smoking.ml.type <- reitsma(smoking, 
+fit.smoking.ml.type <- reitsma(smoking1, 
                           formula = cbind(tsens, tfpr) ~ type, 
                           method = "ml")
-fit.smoking.ml.intercept <- reitsma(smoking, 
+fit.smoking.ml.intercept <- reitsma(smoking1, 
                                     formula = cbind(tsens, tfpr) ~ 1,
                                     method = "ml")
 anova(fit.smoking.ml.type, fit.smoking.ml.intercept)
 
 
 ###################################################
-### code chunk number 38: mada.Rnw:563-569
+### code chunk number 38: mada.Rnw:570-576
 ###################################################
-fit.smoking1 <- reitsma(smoking, method = "ml")
-fit.smoking2 <- reitsma(smoking, 
+fit.smoking1 <- reitsma(smoking1, method = "ml")
+fit.smoking2 <- reitsma(smoking1, 
                         alphasens = 0, alphafpr = 2, 
                         method = "ml")
 AIC(fit.smoking1)

@@ -20,13 +20,17 @@ data("smoking")
 }
 
 
-\format{Five data frames. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and is the only one with 5 variables. 
+\format{Five data frames with frequencies of true positives, false negatives, false positives and true negatives. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and these are the only ones with variables in addition to the frequencies. 
   \describe{
   \item{TP}{numeric. number of true positives}  
   \item{FN}{numeric. number of false negatives}  
   \item{FP}{numeric. number of false positives}  
   \item{TN}{numeric. number of true negatives}  
-  \item{type}{factor. self-administered or interviewer-administered questionnaire}
+  \item{type}{factor. self-administered (SAQ) or interviewer-administered questionnaire (IAQ)}
+  \item{author}{factor. Author(s) of review and year}
+  \item{study_id}{numeric. ID variable for study}
+  \item{result_id}{integer. ID variable for (dependent) 2x2-tables from the same study}
+  \item{population}{factor. general (G) or student (S) population}
   }
 }
 

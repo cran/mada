@@ -420,11 +420,11 @@ One typically assumes a binomial model conditional on a primary studies true sen
 
 Let $p_i$ and $u_i$ denote the $i$th study's true sensitivity and false positive rate respectively, and let $\hat p_i$ and $\hat u_i$ denote their estimates from the observed frequencies. Then, since a binomial model is assumed conditional on the true $p_i$, the variance of $\logit(\hat p_i)$ can be approximated\footnote{This uses the delta method.} by
 \[
-\frac{\hat p_i(1 - \hat p_i)}{m_i},
+\frac{1}{m_i \hat p_i(1 - \hat p_i)},
 \]
 and the variance of $\logit(\hat u_i)$ is then
 \[
-\frac{\hat u_i(1 - \hat u_i)}{n_i}.
+\frac{1}{n_i \hat u_i(1 - \hat u_i)}.
 \]
 So on the within study level one assumes, conditional on $p_i$ and $u_i$, that the observed variation is described by these variances and a normal model; let $D_i$ denote a diagonal 2$\times$2 matrix with the two variances on the diagonal. On the study level, one assumes that a global mean
 \[
@@ -484,8 +484,13 @@ We show how to compare SROC curves. \citet{patrick1994validity} conducted a meta
 <<>>=
 data("IAQ")
 data("SAQ")
-fit.IAQ <- reitsma(IAQ)
-fit.SAQ <- reitsma(SAQ)
+# both datasets contain more than one 2x2-table per study
+# reduce (somewhat arbitrarily) to one row per study by
+# using the first coded table only:
+IAQ1 <- subset(IAQ, IAQ$result_id == 1)
+SAQ1 <- subset(SAQ, SAQ$result_id == 1)
+fit.IAQ <- reitsma(IAQ1)
+fit.SAQ <- reitsma(SAQ1)
 @
 Then one plots the SROC curves of these fits, beginning with the fit of the IAQ and adding the SAQ curve. Note that the \texttt{lty} arguments is used so that the curves can be distinguished.
 <<>>=
@@ -493,8 +498,8 @@ plot(fit.IAQ, xlim = c(0,.5), ylim = c(.5,1),
      main = "Comparison of IAQ and SAQ")
 lines(sroc(fit.SAQ), lty = 2)
 ROCellipse(fit.SAQ, lty = 2, pch = 2, add = TRUE)
-points(fpr(IAQ), sens(IAQ), cex = .5)
-points(fpr(SAQ), sens(SAQ), pch = 2, cex = 0.5)
+points(fpr(IAQ1), sens(IAQ1), cex = .5)
+points(fpr(SAQ1), sens(SAQ1), pch = 2, cex = 0.5)
 legend("bottomright", c("IAQ", "SAQ"), pch = 1:2, lty = 1:2)
 @
 <<echo=FALSE, results=hide>>=
@@ -522,14 +527,16 @@ Figure~\ref{SAQIAQ} contains the resulting plot. The summary estimates are well 
 We demonstrate diagnostic meta-regression also using the data of \citet{patrick1994validity}. We use the complete data set, which is loaded by
 <<>>=
 data("smoking")
+# again reduce to one result per study:
+smoking1 <- subset(smoking, smoking$result_id == 1)
 @
-The \texttt{data.frame} contains the same variables as the \texttt{SAQ} and \texttt{IAQ} subsets, but the type is coded by the fifth variable \texttt{type}:
+The \texttt{data.frame} contains the same variables as the \texttt{SAQ} and \texttt{IAQ} subsets, but the type is coded by the variable \texttt{type}:
 <<>>=
-summary(smoking$type)
+summary(smoking1$type)
 @
 We use the factor \texttt{type} as a covariate in diagnostic meta-regression:
 <<>>=
-fit.smoking.type <- reitsma(smoking, 
+fit.smoking.type <- reitsma(smoking1, 
                             formula = cbind(tsens, tfpr) ~ type)
 @
 Note that the left hand side of the \texttt{formula} object always has to be of the form \texttt{cbind(tsens, tfpr)}, where \texttt{tsens} and \texttt{tfpr} are for \emph{transformed} sensitivity and false positive rate respectively.
@@ -544,10 +551,10 @@ Note that once meta-regression is used, one cannot reasonably plot SROC curves, 
 We can also compare the fit of two bivariate meta-regressions with a likelihood-ratio test. For this, we have to refit the models with the maximum likelihood method, as the likelihood-ratio test relies on asymptotic theory that is only valid if this estimation method is employed.
 
 <<>>=
-fit.smoking.ml.type <- reitsma(smoking, 
+fit.smoking.ml.type <- reitsma(smoking1, 
                           formula = cbind(tsens, tfpr) ~ type, 
                           method = "ml")
-fit.smoking.ml.intercept <- reitsma(smoking, 
+fit.smoking.ml.intercept <- reitsma(smoking1, 
                                     formula = cbind(tsens, tfpr) ~ 1,
                                     method = "ml")
 anova(fit.smoking.ml.type, fit.smoking.ml.intercept)
@@ -561,14 +568,14 @@ t_\alpha(x) := \alpha\log(x) - (2-\alpha)\log(1-x),\quad x\in (0,1), \alpha\in [
 \]
 For $\alpha = 1$, the logit is obtained. In many cases the fit of a bivariate meta-regression can be improved upon by choosing adequate values for $\alpha$. The rational behind this is, that especially sensitivities tend to cluster around values like .95 and the symmetric logit transformation does not necessarily lead to normally distributed transformed proportions. As an example we study the \texttt{smoking} data again using maximum-likelihood estimation:
 <<>>=
-fit.smoking1 <- reitsma(smoking, method = "ml")
-fit.smoking2 <- reitsma(smoking, 
+fit.smoking1 <- reitsma(smoking1, method = "ml")
+fit.smoking2 <- reitsma(smoking1, 
                         alphasens = 0, alphafpr = 2, 
                         method = "ml")
 AIC(fit.smoking1)
 AIC(fit.smoking2)
 @
-The lower AIC value indicates, that the fit of the second model is better. Likelihood-ratio tests for this type of transformation are discussed by \citet{doebler2012mixed}.
+The almost identical AIC values indicates, that the fit of the models is comparable. For purpose of inference, we likelihood-ratio tests are recommended, which are discussed for this type of transformation by \citet{doebler2012mixed}.
 
 \section{Further development}
 In the future \pkg{mada} will support the mixture approach of \citet{holling2011likelihood} and Bayesian approaches.

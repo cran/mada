@@ -72,3 +72,12 @@ S3method(AUC, phm)
 import(ellipse)
 import(mvmeta)
 import(mvtnorm)
+
+importFrom("graphics", "abline", "arrows", "axis", "lines", "plot",
+             "points", "polygon", "text")
+  importFrom("stats", "AIC", "BIC", "coef", "confint", "cor", "dbinom",
+             "lm", "logLik", "lowess", "make.link", "median",
+             "model.matrix", "pbinom", "pchisq", "plogis", "pnorm",
+             "printCoefmat", "prop.test", "qbeta", "qchisq", "qnorm",
+             "rbinom", "rpois", "runif", "splinefun", "symnum",
+             "uniroot", "vcov")
