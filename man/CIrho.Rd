@@ -5,7 +5,7 @@ Confidence intervals for Spearman's \eqn{\rho}.
 }
 
 \concept{confidence interval}
-\concept{Spearman's \eqn{\rho}}
+\concept{Spearman's rho}
 
 \description{
 Using Fisher's z-transformation (\code{\link{atanh}}) and the classic normal approximation confidence intervals for a vector of correlations is computed.

@@ -74,4 +74,3 @@ data(AuditC)
 AuditC.d <- madad(AuditC)
 print(AuditC.d, digits = 2) #round everything to 2 digits
 }
-\keyword{univar}

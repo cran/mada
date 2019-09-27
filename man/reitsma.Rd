@@ -89,5 +89,3 @@ summary(fit) ## sensitivities significantly lower for SAQ
 }
 
 \keyword{regression}
-\keyword{multivariate}
-\keyword{transformation}
