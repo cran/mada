@@ -544,7 +544,7 @@ We generate detailed output by:
 <<>>=
 summary(fit.smoking.type)
 @
-This output can be interpreted as follows: The $z$~value for the regression coefficient for the sensitivities is significant, indicating that the interviewer administered questionnaires offer a better sensitivity. Interestingly the point estimate for the  false-positive rates does not indicate any effect.
+This output can be interpreted as follows: The $z$~value for the regression coefficient for the false-positive rates is significant, indicating that the interviewer administered questionnaires offer a better false-positive rate (the coefficient for the difference in false-positive rate for SAQ is positive, so the false positive rates are higher for the SAQ and, hence, lower for the IAQ). Interestingly the point estimate for the sensitivities does not indicate any effect.
 
 Note that once meta-regression is used, one cannot reasonably plot SROC curves, since fixed values for the covariates would have to be supplied to do so. Also (global) AUC values do not make sense.
 

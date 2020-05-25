@@ -1,4 +1,4 @@
-394b6a2718283ac97d157dbfc4a0a0c3 *DESCRIPTION
+5c27a391c76a7f81d8411eeaa9fb4d00 *DESCRIPTION
 225c1395b309805e88e704d6fc448783 *NAMESPACE
 b39c1791fa066ef701e0f9bb2e10d206 *R/AUC.R
 854eda82ec31237f3271bccc8248895a *R/ROCellipse.R
@@ -16,15 +16,15 @@ e321731a330141fa8b0ee05b9a30759e *R/reitsmaGibbs.R
 6ef87cd8965219c510878ce67837cd5f *R/rsSROC.R
 b96d1b6a6a37db46009f02f2d58067a2 *R/sroc.R
 5db96ddfcab97fb271c93494c1117f7b *R/t_alpha.R
-d060f09a697ecd0258240f9d4ccc84b5 *build/vignette.rds
-b58e3cb77dc716434200e40cabd30ea8 *data/AuditC.rda
-e6e1098383b3d422de3d9e1cb9658e8d *data/Dementia.rda
-57471d600aeac274eff15097d21f65be *data/IAQ.rda
-19eea8c94f16be4d0fd23625a8a93d3c *data/SAQ.rda
-6d12996ef73708bd93af92fcc9572829 *data/smoking.rda
+482eebf50ae1f875e6736412c351c52e *build/vignette.rds
+e14d1c76389545614d8cf2ac4bacb9fd *data/AuditC.rda
+957159fff42f23900f0473562a1edd98 *data/Dementia.rda
+cfc9942dbd65e8f0b1425db82ec783e5 *data/IAQ.rda
+376775f6f3fd2a38a37c712e71c828c2 *data/SAQ.rda
+7bd4a0c5cf5baeeb6e258064cae49634 *data/smoking.rda
 f855e4d5d662b9c1fa23e875db64b304 *inst/doc/mada.R
-2eecb44d9a0840e59f21cc2c2973f874 *inst/doc/mada.Rnw
-264146e7111cd35733358b4a7fc7d4a2 *inst/doc/mada.pdf
+87ffa0e35726015e1f66a083d51f1a6f *inst/doc/mada.Rnw
+d01af275b923bcfa9ecb618c7ebf3ef9 *inst/doc/mada.pdf
 29a690d8cd843f1bfc7845b03326bf68 *man/AUC.Rd
 3e00916807121358e933e2a4d77e70ca *man/CIrho.Rd
 f7d3d0e3317f33b6508e6bb5608061b5 *man/ROCellipse.Rd
@@ -45,5 +45,5 @@ c3b731d76ba203aefbbe650bc3ef2976 *man/reitsma.Rd
 d07934c9f9ff5cc2d6d9d6b242b4d1b1 *man/rsSROC.Rd
 6e54688b99924c6fb21cba0fd828c6bb *man/sens.Rd
 366c732dad2387212956537576e05fc9 *man/talpha.Rd
-2eecb44d9a0840e59f21cc2c2973f874 *vignettes/mada.Rnw
+87ffa0e35726015e1f66a083d51f1a6f *vignettes/mada.Rnw
 db13a59d2fd649446d043b943b718b1f *vignettes/mada.bib
