@@ -1,39 +1,38 @@
 ### R code from vignette source 'mada.Rnw'
-### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: mada.Rnw:94-95
+### code chunk number 1: mada.Rnw:97-98
 ###################################################
 options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 
 ###################################################
-### code chunk number 2: mada.Rnw:107-108 (eval = FALSE)
+### code chunk number 2: mada.Rnw:110-111 (eval = FALSE)
 ###################################################
 ## install.packages("mada")
 
 
 ###################################################
-### code chunk number 3: mada.Rnw:111-112
+### code chunk number 3: mada.Rnw:114-115
 ###################################################
 library("mada")
 
 
 ###################################################
-### code chunk number 4: mada.Rnw:144-146
+### code chunk number 4: mada.Rnw:147-149
 ###################################################
 y <- 142 * .944 
 y
 
 
 ###################################################
-### code chunk number 5: mada.Rnw:149-150
+### code chunk number 5: mada.Rnw:152-153
 ###################################################
 round(y)
 
 
 ###################################################
-### code chunk number 6: mada.Rnw:155-160
+### code chunk number 6: mada.Rnw:158-163
 ###################################################
 AuditC6 <- data.frame(TP = c(47, 126, 19, 36, 130, 84),
                       FN = c(9, 51, 10, 3, 19, 2),
@@ -43,47 +42,47 @@ AuditC6
 
 
 ###################################################
-### code chunk number 7: mada.Rnw:163-165
+### code chunk number 7: mada.Rnw:166-168
 ###################################################
 AuditC6$names <- c("Study 1", "Study 2", "Study 4",
                    "Study 4", "Study 5", "Study 6")
 
 
 ###################################################
-### code chunk number 8: mada.Rnw:169-171
+### code chunk number 8: mada.Rnw:172-174
 ###################################################
 data("AuditC")
 tail(AuditC)
 
 
 ###################################################
-### code chunk number 9: mada.Rnw:192-193 (eval = FALSE)
+### code chunk number 9: mada.Rnw:195-196 (eval = FALSE)
 ###################################################
 ## madad(AuditC)
 
 
 ###################################################
-### code chunk number 10: mada.Rnw:223-224 (eval = FALSE)
+### code chunk number 10: mada.Rnw:226-227 (eval = FALSE)
 ###################################################
 ## madad(AuditC, level = 0.80)
 
 
 ###################################################
-### code chunk number 11: mada.Rnw:227-229
+### code chunk number 11: mada.Rnw:230-232
 ###################################################
 AuditC.d <- madad(AuditC)
 AuditC.d$fpr
 
 
 ###################################################
-### code chunk number 12: mada.Rnw:245-247 (eval = FALSE)
+### code chunk number 12: mada.Rnw:248-250 (eval = FALSE)
 ###################################################
 ## forest(madad(AuditC), type = "sens")
 ## forest(madad(AuditC), type = "spec")
 
 
 ###################################################
-### code chunk number 13: mada.Rnw:250-258
+### code chunk number 13: mada.Rnw:253-261
 ###################################################
 pdf(file = "pairedforest.pdf", width = 12, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.3,0.3,0.3))
@@ -96,7 +95,7 @@ dev.off()
 
 
 ###################################################
-### code chunk number 14: mada.Rnw:274-278
+### code chunk number 14: mada.Rnw:277-281
 ###################################################
 rs <- rowSums(AuditC)
 weights <- 4 * rs / max(rs)
@@ -105,14 +104,14 @@ crosshair(AuditC, xlim = c(0,0.6), ylim = c(0.4,1),
 
 
 ###################################################
-### code chunk number 15: mada.Rnw:282-284
+### code chunk number 15: mada.Rnw:285-287
 ###################################################
 ROCellipse(AuditC, pch = "")
 points(fpr(AuditC), sens(AuditC))
 
 
 ###################################################
-### code chunk number 16: mada.Rnw:287-296
+### code chunk number 16: mada.Rnw:290-299
 ###################################################
 pdf(file = "diagplots.pdf", width = 12, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -126,26 +125,26 @@ dev.off()
 
 
 ###################################################
-### code chunk number 17: mada.Rnw:343-345
+### code chunk number 17: mada.Rnw:346-348
 ###################################################
 (fit.DOR.DSL <- madauni(AuditC))
 (fit.DOR.MH <- madauni(AuditC, method = "MH"))
 
 
 ###################################################
-### code chunk number 18: mada.Rnw:348-349
+### code chunk number 18: mada.Rnw:351-352
 ###################################################
 summary(fit.DOR.DSL)
 
 
 ###################################################
-### code chunk number 19: mada.Rnw:352-353
+### code chunk number 19: mada.Rnw:355-356
 ###################################################
 forest(fit.DOR.DSL)
 
 
 ###################################################
-### code chunk number 20: mada.Rnw:356-360
+### code chunk number 20: mada.Rnw:359-363
 ###################################################
 pdf(file = "DORforest.pdf", width = 6, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -154,33 +153,33 @@ dev.off()
 
 
 ###################################################
-### code chunk number 21: mada.Rnw:377-379
+### code chunk number 21: mada.Rnw:380-382
 ###################################################
 (fit.phm.homo <- phm(AuditC, hetero = FALSE))
 (fit.phm.het <- phm(AuditC))
 
 
 ###################################################
-### code chunk number 22: mada.Rnw:382-383
+### code chunk number 22: mada.Rnw:385-386
 ###################################################
 summary(fit.phm.homo)
 
 
 ###################################################
-### code chunk number 23: mada.Rnw:386-387
+### code chunk number 23: mada.Rnw:389-390
 ###################################################
 summary(fit.phm.het)
 
 
 ###################################################
-### code chunk number 24: mada.Rnw:390-392
+### code chunk number 24: mada.Rnw:393-395
 ###################################################
 plot(fit.phm.het, xlim = c(0,0.6), ylim = c(0.4,1))
 ROCellipse(AuditC, add = TRUE)
 
 
 ###################################################
-### code chunk number 25: mada.Rnw:395-400
+### code chunk number 25: mada.Rnw:398-403
 ###################################################
 pdf(file = "phmplot.pdf", width = 6, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -190,19 +189,19 @@ dev.off()
 
 
 ###################################################
-### code chunk number 26: mada.Rnw:446-447
+### code chunk number 26: mada.Rnw:449-450
 ###################################################
 (fit.reitsma <- reitsma(AuditC))
 
 
 ###################################################
-### code chunk number 27: mada.Rnw:450-451
+### code chunk number 27: mada.Rnw:453-454
 ###################################################
 summary(fit.reitsma)
 
 
 ###################################################
-### code chunk number 28: mada.Rnw:454-459
+### code chunk number 28: mada.Rnw:459-464
 ###################################################
 plot(fit.reitsma, sroclwd = 2,
      main = "SROC curve (bivariate model) for AUDIT-C data")
@@ -212,7 +211,7 @@ legend("bottomleft", c("SROC", "conf. region"), lwd = c(2,1))
 
 
 ###################################################
-### code chunk number 29: mada.Rnw:462-470
+### code chunk number 29: mada.Rnw:467-475
 ###################################################
 pdf(file = "SROCAuditC.pdf", width = 6, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -225,7 +224,7 @@ dev.off()
 
 
 ###################################################
-### code chunk number 30: mada.Rnw:484-493
+### code chunk number 30: mada.Rnw:489-498
 ###################################################
 data("IAQ")
 data("SAQ")
@@ -239,7 +238,7 @@ fit.SAQ <- reitsma(SAQ1)
 
 
 ###################################################
-### code chunk number 31: mada.Rnw:496-503
+### code chunk number 31: mada.Rnw:501-508
 ###################################################
 plot(fit.IAQ, xlim = c(0,.5), ylim = c(.5,1),
      main = "Comparison of IAQ and SAQ")
@@ -251,7 +250,7 @@ legend("bottomright", c("IAQ", "SAQ"), pch = 1:2, lty = 1:2)
 
 
 ###################################################
-### code chunk number 32: mada.Rnw:505-515
+### code chunk number 32: mada.Rnw:510-520
 ###################################################
 pdf(file = "SAQIAQ.pdf", width = 6, height = 6)
 par(omi = c(0,0,0,0), mai = c(0.9,0.9,0.3,0.3))
@@ -266,7 +265,7 @@ dev.off()
 
 
 ###################################################
-### code chunk number 33: mada.Rnw:528-531
+### code chunk number 33: mada.Rnw:533-536
 ###################################################
 data("smoking")
 # again reduce to one result per study:
@@ -274,26 +273,26 @@ smoking1 <- subset(smoking, smoking$result_id == 1)
 
 
 ###################################################
-### code chunk number 34: mada.Rnw:534-535
+### code chunk number 34: mada.Rnw:539-540
 ###################################################
 summary(smoking1$type)
 
 
 ###################################################
-### code chunk number 35: mada.Rnw:538-540
+### code chunk number 35: mada.Rnw:543-545
 ###################################################
 fit.smoking.type <- reitsma(smoking1, 
                             formula = cbind(tsens, tfpr) ~ type)
 
 
 ###################################################
-### code chunk number 36: mada.Rnw:544-545
+### code chunk number 36: mada.Rnw:549-550
 ###################################################
 summary(fit.smoking.type)
 
 
 ###################################################
-### code chunk number 37: mada.Rnw:553-560
+### code chunk number 37: mada.Rnw:558-565
 ###################################################
 fit.smoking.ml.type <- reitsma(smoking1, 
                           formula = cbind(tsens, tfpr) ~ type, 
@@ -305,7 +304,7 @@ anova(fit.smoking.ml.type, fit.smoking.ml.intercept)
 
 
 ###################################################
-### code chunk number 38: mada.Rnw:570-576
+### code chunk number 38: mada.Rnw:575-581
 ###################################################
 fit.smoking1 <- reitsma(smoking1, method = "ml")
 fit.smoking2 <- reitsma(smoking1, 
@@ -313,5 +312,26 @@ fit.smoking2 <- reitsma(smoking1,
                         method = "ml")
 AIC(fit.smoking1)
 AIC(fit.smoking2)
+
+
+###################################################
+### code chunk number 39: mada.Rnw:590-592
+###################################################
+summary_pts_audit <- SummaryPts(reitsma(AuditC))
+summary(summary_pts_audit)
+
+
+###################################################
+### code chunk number 40: mada.Rnw:600-602
+###################################################
+pred_audit1 <- predv_r(AuditC, prop_min=0.05, prop_max=0.15)
+summary(pred_audit1)
+
+
+###################################################
+### code chunk number 41: mada.Rnw:609-611
+###################################################
+pred_audit2 <- predv_d(AuditC, prop_m=0.10, prop_sd=0.05)
+summary(pred_audit2)
 
 

@@ -23,6 +23,12 @@ export("talpha")
 export("SummaryPts")
 export("mslSROC")
 export("rsSROC")
+export("predv_d")
+export("predv_r")
+export("print.predv_r")
+export("summary.predv_r")
+export("print.predv_d")
+export("summary.predv_d")
 
 
 
@@ -69,15 +75,28 @@ S3method(plot, phm)
 S3method(phm, default)
 S3method(AUC, phm)
 
+
+S3method(print, predv_r)
+S3method(summary, predv_r)
+S3method(print, predv_d)
+S3method(summary, predv_d)
+
+
 import(ellipse)
 import(mvmeta)
 import(mvtnorm)
+importFrom(metafor,rma)
 
 importFrom("graphics", "abline", "arrows", "axis", "lines", "plot",
-             "points", "polygon", "text")
-  importFrom("stats", "AIC", "BIC", "coef", "confint", "cor", "dbinom",
+             "points", "polygon", "text", "hist", "legend", "par", "strheight",
+                "strwidth")
+importFrom("stats", "AIC", "BIC", "coef", "confint", "cor", "dbinom",
              "lm", "logLik", "lowess", "make.link", "median",
              "model.matrix", "pbinom", "pchisq", "plogis", "pnorm",
              "printCoefmat", "prop.test", "qbeta", "qchisq", "qnorm",
              "rbinom", "rpois", "runif", "splinefun", "symnum",
-             "uniroot", "vcov")
+             "uniroot", "vcov", "dbeta", "density", "pbeta", "quantile", "rbeta",
+                "sd", "aggregate")
+importFrom("grDevices", "dev.off", "recordPlot")
+    
+importFrom("methods", "is")

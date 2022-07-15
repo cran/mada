@@ -5,22 +5,24 @@
 \alias{Dementia}
 \alias{IAQ}
 \alias{SAQ}
+\alias{skin_tests}
 \alias{smoking}
 
 \title{Diagnostic accuracy data}
 
-\description{Five data frames with diagnostic accuracy data from binary test outcomes.}
+\description{Six data frames with diagnostic accuracy data from binary test outcomes.}
 
 \usage{
 data("AuditC")
 data("Dementia")
 data("IAQ")
 data("SAQ")
+data("skin_tests")
 data("smoking")
 }
 
 
-\format{Five data frames with frequencies of true positives, false negatives, false positives and true negatives. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and these are the only ones with variables in addition to the frequencies. 
+\format{Six data frames with frequencies of true positives, false negatives, false positives and true negatives. The data set \code{smoking} combines the \code{IAQ} and \code{SAQ} data sets and these are the only ones with variables in addition to the frequencies. 
   \describe{
   \item{TP}{numeric. number of true positives}  
   \item{FN}{numeric. number of false negatives}  
@@ -36,7 +38,7 @@ data("smoking")
 
 
 \details{
-The \code{AuditC} data is from Kriston et al. (2008). The \code{Dementia} from Mitchell (2009) and the \code{SAQ} and \code{IAQ} data are subsets from the data in Patrick et al. (1994), while \code{smoking} is the complete data.
+The \code{AuditC} data is from Kriston et al. (2008). The \code{Dementia} from Mitchell (2009) and the \code{SAQ} and \code{IAQ} data are subsets from the data in Patrick et al. (1994), while \code{smoking} is the complete data. The \code{skin_tests} data is part of the data from Sousa-Pinto et al. (2021) and concerns the accuracy of penicillin allergy skin tests.
 }
 
 \source{
@@ -51,6 +53,8 @@ Research}, \bold{43}, 411--431.
 Patrick, D., Cheadle, A., Thompson, D., Diehr, P., Koepsell, T., & Kinne, S. (1994). \dQuote{The
 validity of self-reported smoking: a review and meta-analysis.} \emph{American Journal of
 Public Health}, \bold{84}, 1086--1093.
+
+Sousa-Pinto, B., Tarrio, I., Blumenthal, K.G., Araujo, L., Azevedo, L.F., Delgado, L. & Fonseca, J.A. (2021). \dQuote{Accuracy of penicillin allergy diagnostic tests: A systematic review and meta-analysis.} \emph{Journal of Allergy and Clinical Immunology}, \bold{147}, 296--308.
 }
 
 \keyword{datasets}

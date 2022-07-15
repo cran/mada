@@ -25,10 +25,13 @@
 
 \title{Meta-Analysis of Diagnostic Accuracy with  \pkg{mada}}
 \author{Philipp Doebler \\
-      WWU M\"unster
+      TU Dortmund University
       \And
       Heinz Holling \\
-      WWU M\"unster}
+      WWU M\"unster
+      \And
+      Bernardo Sousa-Pinto\\ 
+      University of Porto}
 
 \Plainauthor{Philipp Doebler, Heinz Holling} %% comma-separated
 \Plaintitle{Meta-Analysis of Diagnostic Accuracy with mada} %% without formatting
@@ -450,7 +453,9 @@ The \code{print} method for \code{reitsma} objects has a scarce output. More inf
 <<>>=
 summary(fit.reitsma)
 @
-Note the sensitivity and false positive rate returned in this summary are just the back-transformed $\mu_1$ and $\mu_2$. One can then proceed to plot the SROC curve of this model. By default the point estimate of the pair of sensitivity and false positive rate is also plotted together with a confidence region. In the following example the SROC curve is plotted a bit thicker using the \texttt{sroclwd} argument, a caption is added to the plot and also the data and a legend. By default the SROC curve is not extrapolated beyond the range of the original data: 
+Note the sensitivity and false positive rate returned in this summary are just the back-transformed $\mu_1$ and $\mu_2$. 
+In addition, please note that the methodology for estimating the I2 in the context of diagnostic test accuracy meta-analyses is not yet fully established. The obtained estimates are based on the approach described by \citet{zhou2014i2} for bivariate meta-analysis and based on the approaches described by \citet{holling2019i2}. For the latter, we compute both sample size-unadjusted and adjusted estimated according to all provided formulae for computing within-study variability.
+One can then proceed to plot the SROC curve of this model. By default the point estimate of the pair of sensitivity and false positive rate is also plotted together with a confidence region. In the following example the SROC curve is plotted a bit thicker using the \texttt{sroclwd} argument, a caption is added to the plot and also the data and a legend. By default the SROC curve is not extrapolated beyond the range of the original data: 
 <<>>=
 plot(fit.reitsma, sroclwd = 2,
      main = "SROC curve (bivariate model) for AUDIT-C data")
@@ -576,6 +581,41 @@ AIC(fit.smoking1)
 AIC(fit.smoking2)
 @
 The almost identical AIC values indicates, that the fit of the models is comparable. For purpose of inference, we likelihood-ratio tests are recommended, which are discussed for this type of transformation by \citet{doebler2012mixed}.
+
+
+\subsection{Estimating Likelihood Ratios and Diagnostic Odds Ratio}
+Based on the bivariate model for diagnostic test accuracy, it is possible to obtain pooled likelihood ratios and diagnostic odds ratio. The \texttt{SummaryPts} function applies a sampling based approach (as proposed by \citet{zwinderman2008}) to estimate the aforementioned properties.
+As an example, applying the \texttt{SummaryPts} function to the \texttt{AuditC} data, we would get: 
+
+<<>>=
+summary_pts_audit <- SummaryPts(reitsma(AuditC))
+summary(summary_pts_audit)
+@
+
+\subsection{Estimating Pooled Predictive Values}
+Predictive values are particularly useful in the clinical practice. The negative predictive value indicates the probability of a patient with a negative test not having a certain disease/condition, while the positive predictive value indicates the probability of a patient with a positive test having that certain disease/condition. The predictive values are dependent not only on the sensitivity and specificity of the diagnostic test, but also on the prevalence of the disease/condition in the setting being studied.
+The \texttt{predv\_r} and the \texttt{predv\_d} functions project probability distributions of predictive values based i. on pooled sensitivities and specificities (obtained using the bivariate approach) and ii. on prevalence ranges or distributions. An application of this approach has been used by \citet{sousapinto2021}
+As an example, we will use the \texttt{AuditC} data. Let us consider that the prevalence of alcohol problems (the condition being assessed in the AuditC example) ranges between 5\% and 15\%. We can use the \texttt{predv\_r} function to obtain distributions for the negative and positive predictive values of the screening test for each prevalence value within that range:
+
+<<>>=
+pred_audit1 <- predv_r(AuditC, prop_min=0.05, prop_max=0.15)
+summary(pred_audit1)
+@
+
+We observe that the, for the defined prevalence range, the mean estimate for the negative predictive value ranges between 98\% and 99\%, while the mean estimate for the positive predictive value ranges between 18\% and 42\%. 
+
+Now let us consider that we do not want to project predictive values based on a prevalence range, but rather based on a prevalence probability distribution. We know that the prevalence of alcohol problems is given by a distribution, with a mean value of 10\% and a standard-deviation of 5. We can use the \texttt{predv\_d} function to obtain probability distributions for the negative and positive predictive values:
+
+<<>>=
+pred_audit2 <- predv_d(AuditC, prop_m=0.10, prop_sd=0.05)
+summary(pred_audit2)
+@
+
+We obtain a distribution of negative predictive values defined by a mean of 98\% and a standard-deviation of 1\% (95\%CrI=96-100\%), and a distribution of positive predictive values defined by a mean of 30\% and a standard-deviation of 12\% (95\%CrI=10-53\%).
+
+By default, the Zwindermann \& Bossuyt approach is used to generate samples based of sensitivities and false positive rates \citet{zwinderman2008}, based on which distributions of predictive values are obtained. For faster results, such an approach may not be used (\texttt{zb=FALSE}). Expected differences are small, especially if the number of participants of primary studies is sufficiently high.
+
+If prevalence inputs (minimum and maximum, or mean and standard-deviation) are not provided, the \texttt{predv\_r} and the \texttt{predv\_d} functions will estimate those inputs based on data from primary studies. However, this may not be advisable, as studies focusing on diagnostic test accuracy are typically not specifically designed for prevalence assessment (case-control studies are particularly troublesome in this context).
 
 \section{Further development}
 In the future \pkg{mada} will support the mixture approach of \citet{holling2011likelihood} and Bayesian approaches.

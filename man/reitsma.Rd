@@ -47,7 +47,7 @@ Note that for \eqn{\alpha=1}, the default value, the logit transformation result
 
 Parameter estimation makes use of the fact that the fixed effect parameters can be profiled in the likelihood. Internally the function \code{\link[mvmeta]{mvmeta}} is called. Currently only standard errors for the fixed effects are available. Note that when using \code{method = "mm"} or \code{method = "vc"}, no likelihood can be computed and hence no AIC or BIC values.
 
-If you want other summary points like negative or positive likelihood ratios, see \code{\link{SummaryPts}}.
+If you want other summary points like negative or positive likelihood ratios, see \code{\link{SummaryPts}}, while for positive or negative predictive values, see \code{\link{predv_r}} and \code{\link{predv_d}}.
 }
 \value{
 An object of the class \code{reitsma} for which many standard methods are available. See \code{\link{reitsma-class}} for details.

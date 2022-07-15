@@ -1,114 +1,121 @@
 reitsma <- function(data, ...) UseMethod("reitsma")
 
 reitsma.default <-
-function(data = NULL, subset=NULL, formula = NULL,
-         TP="TP", FN="FN", FP="FP", TN="TN", 
-         alphasens = 1, alphafpr = 1, 
-         correction = 0.5, correction.control = "all",
-         method = "reml",  
-         control = list(), ...)
-{
-  call <- match.call()
-  mcall <- match.call(expand.dots = FALSE)
-  
-stopifnot(is.numeric(correction), 0 <= correction,  
-          correction.control %in% c("all", "single", "none"),
-          0 <= alphasens, alphasens <= 2, 0 <= alphafpr, alphafpr <= 2,
-          method %in% c("fixed", "ml", "reml", "mm", "vc"),
-          is.numeric(TP) | (is.character(TP) & length(TP) == 1),
-          is.numeric(FP) | (is.character(FP) & length(FP) == 1),
-          is.numeric(TN) | (is.character(TN) & length(TN) == 1),
-          is.numeric(FN) | (is.character(FN) & length(FN) == 1))
-
-if(is.null(formula)){formula <- cbind(tsens,tfpr)~1}
-if(!class(formula) == "formula"){stop("formula must be of class formula")}
-if(!formula[2] == (cbind(tsens,tfpr)~1)[2]){stop("The left hand side of formula must be cbind(tsens, tfpr)")}
-
-if(!is.null(data) & is.character(c(TP,FP,TN,FN))){
-X <- as.data.frame(data)
-origdata <- data
-TP <- getElement(X,TP)
-FN <- getElement(X,FN)
-FP <- getElement(X,FP)
-TN <- getElement(X,TN)
-}
-   
-if(is.null(data) & !is.character(c(TP,FP,TN,FN))){
-  origdata <- data.frame(TP = TP, FN = FN, FP = FP, TN = TN)
-}
-
-freqdata <- cbind(TP,FN,FP,TN)
-checkdata(freqdata)
-
-N <- length(TP)	
-	
-## apply continuity correction to _all_ studies if one contains zero
-if(correction.control == "all"){if(any(c(TP,FN,FP,TN) == 0))
-  {TP <- TP + correction;
-	 FN <- FN + correction;
-	 FP <- FP + correction;
-	 TN <- TN + correction}}
-if(correction.control == "single"){
-	correction = ((((TP == 0)|(FN == 0))|(FP == 0))| (TN == 0)) * 
-    correction
-  TP <- correction + TP
-	FN <- correction + FN
-	FP <- correction + FP
-	TN <- correction + TN
-	}
-
-number.of.pos <- TP + FN
-number.of.neg <- FP + TN
-sens<-TP/number.of.pos
-fpr <- FP/number.of.neg
-
-senstrafo <- function(x){return(talpha(alphasens)$linkfun(x))}
-fprtrafo <- function(x){return(talpha(alphafpr)$linkfun(x))}
-sensinvtrafo <- function(x){return(talpha(alphasens)$linkinv(x))}
-fprinvtrafo <- function(x){return(talpha(alphafpr)$linkinv(x))}
-
-
-trafo.sens <- senstrafo(sens)
-trafo.fpr <- fprtrafo(fpr)
-
-var.trafo.sens <- (sens*(1-sens)/number.of.pos) * 
-  (jacobiantrafo(alphasens, sens)^2)
-var.trafo.fpr <- (fpr*(1-fpr)/number.of.neg) * 
-  (jacobiantrafo(alphafpr, fpr)^2)
-  
-
-# preparations for call to mvmeta.fit
-mvmeta_S <- cbind(var.trafo.sens, rep(0,N), var.trafo.fpr)
-mvmeta_data <- data.frame(X,tsens = trafo.sens, tfpr = trafo.fpr)
-mvmeta_X <- model.matrix(formula,data=mvmeta_data)  
-mvmeta_y <- as.matrix(data.frame(tsens = trafo.sens, tfpr = trafo.fpr))
-  
-fit <- mvmeta.fit(mvmeta_X, mvmeta_y, mvmeta_S, method = method, control = control)
-
-fit$call <- call
-fit$formula <- formula
-fit$control <- control
-fit$method <- method
-fit$alphasens <- alphasens
-fit$alphafpr <- alphafpr
-fit$data <- origdata
-fit$freqdata <- as.data.frame(freqdata)
-  
-class(fit) <- "reitsma"
-
-## modify log likelihood, especially add jacobian
-attr(fit$logLik, "df") <- 2*ncol(mvmeta_X) + 3
-fit$logLik  <-  fit$logLik + sum(log(jacobiantrafo(alphasens,sens)) + 
-  log(jacobiantrafo(alphafpr,fpr)))
-  
-fit$nobs <- 2*N
-
-return(fit)
-
-class(output) <- "reitsma"
-return(output)
-
-}
+  function(data = NULL, subset=NULL, formula = NULL,
+           TP="TP", FN="FN", FP="FP", TN="TN", 
+           alphasens = 1, alphafpr = 1, 
+           correction = 0.5, correction.control = "all",
+           method = "reml",  
+           control = list(), ...)
+  {
+    call <- match.call()
+    mcall <- match.call(expand.dots = FALSE)
+    
+    stopifnot(is.numeric(correction), 0 <= correction,  
+              correction.control %in% c("all", "single", "none"),
+              0 <= alphasens, alphasens <= 2, 0 <= alphafpr, alphafpr <= 2,
+              method %in% c("fixed", "ml", "reml", "mm", "vc"),
+              is.numeric(TP) | (is.character(TP) & length(TP) == 1),
+              is.numeric(FP) | (is.character(FP) & length(FP) == 1),
+              is.numeric(TN) | (is.character(TN) & length(TN) == 1),
+              is.numeric(FN) | (is.character(FN) & length(FN) == 1))
+    
+    if(is.null(formula)){formula <- cbind(tsens,tfpr)~1}
+    if(!is(formula, "formula")){stop("formula must be of class formula")}
+    if(!formula[2] == (cbind(tsens,tfpr)~1)[2]){stop("The left hand side of formula must be cbind(tsens, tfpr)")}
+    
+    if(!is.null(data) & is.character(c(TP,FP,TN,FN))){
+      X <- as.data.frame(data)
+      origdata <- data
+      TP <- getElement(X,TP)
+      FN <- getElement(X,FN)
+      FP <- getElement(X,FP)
+      TN <- getElement(X,TN)
+    }
+    
+    if(is.null(data) & !is.character(c(TP,FP,TN,FN))){
+      origdata <- data.frame(TP = TP, FN = FN, FP = FP, TN = TN)
+    }
+    
+    freqdata <- cbind(TP,FN,FP,TN)
+    checkdata(freqdata)
+    
+    N <- length(TP)	
+    
+    ## apply continuity correction to _all_ studies if one contains zero
+    if(correction.control == "all"){if(any(c(TP,FN,FP,TN) == 0))
+    {TP <- TP + correction;
+    FN <- FN + correction;
+    FP <- FP + correction;
+    TN <- TN + correction}}
+    if(correction.control == "single"){
+      correction = ((((TP == 0)|(FN == 0))|(FP == 0))| (TN == 0)) * 
+        correction
+      TP <- correction + TP
+      FN <- correction + FN
+      FP <- correction + FP
+      TN <- correction + TN
+    }
+    
+    tpi <- TP
+    fni <- FN
+    fpi <- FP
+    tni <- TN
+    freqdata1 <- cbind(tpi,fni,fpi,tni)
+    
+    number.of.pos <- TP + FN
+    number.of.neg <- FP + TN
+    sens<-TP/number.of.pos
+    fpr <- FP/number.of.neg
+    
+    senstrafo <- function(x){return(talpha(alphasens)$linkfun(x))}
+    fprtrafo <- function(x){return(talpha(alphafpr)$linkfun(x))}
+    sensinvtrafo <- function(x){return(talpha(alphasens)$linkinv(x))}
+    fprinvtrafo <- function(x){return(talpha(alphafpr)$linkinv(x))}
+    
+    
+    trafo.sens <- senstrafo(sens)
+    trafo.fpr <- fprtrafo(fpr)
+    
+    var.trafo.sens <- (sens*(1-sens)/number.of.pos) * 
+      (jacobiantrafo(alphasens, sens)^2)
+    var.trafo.fpr <- (fpr*(1-fpr)/number.of.neg) * 
+      (jacobiantrafo(alphafpr, fpr)^2)
+    
+    
+    # preparations for call to mvmeta.fit
+    mvmeta_S <- cbind(var.trafo.sens, rep(0,N), var.trafo.fpr)
+    mvmeta_data <- data.frame(X,tsens = trafo.sens, tfpr = trafo.fpr)
+    mvmeta_X <- model.matrix(formula,data=mvmeta_data)  
+    mvmeta_y <- as.matrix(data.frame(tsens = trafo.sens, tfpr = trafo.fpr))
+    
+    fit <- mvmeta.fit(mvmeta_X, mvmeta_y, mvmeta_S, method = method, control = control)
+    
+    fit$call <- call
+    fit$formula <- formula
+    fit$control <- control
+    fit$method <- method
+    fit$alphasens <- alphasens
+    fit$alphafpr <- alphafpr
+    fit$data <- origdata
+    fit$freqdata <- as.data.frame(freqdata)
+    fit$freqdata1 <- as.data.frame(freqdata1)
+    
+    class(fit) <- "reitsma"
+    
+    ## modify log likelihood, especially add jacobian
+    attr(fit$logLik, "df") <- 2*ncol(mvmeta_X) + 3
+    fit$logLik  <-  fit$logLik + sum(log(jacobiantrafo(alphasens,sens)) + 
+                                       log(jacobiantrafo(alphafpr,fpr)))
+    
+    fit$nobs <- 2*N
+    
+    return(fit)
+    
+    class(output) <- "reitsma"
+    return(output)
+    
+  }
 
 print.reitsma <- function (x, digits = 4, ...) 
 {
@@ -132,116 +139,174 @@ print.reitsma <- function (x, digits = 4, ...)
 }
 
 summary.reitsma <- 
-function (object, level = 0.95, sroc.type = "ruttergatsonis", ...) 
-{
-  stopifnot(sroc.type %in% c("naive", "ruttergatsonis"))
-  ci.level <- level
-  if (ci.level <= 0 || ci.level >= 1) 
-    stop("'ci.level' must be within 0 and 1")
-  coef <- object$coefficients
-  vcov <- object$vcov
-  dim <- object$dim
-  Psi <- object$Psi
-  lab <- object$lab
-  coef <- as.numeric(coef)
-  coef.se <- sqrt(diag(vcov))
-  zval <- coef/coef.se
-  zvalci <- qnorm((1 - ci.level)/2, lower.tail = FALSE)
-  pvalue <- 2 * (1 - pnorm(abs(zval)))
-  ci.lb <- coef - zvalci * coef.se
-  ci.ub <- coef + zvalci * coef.se
-  cilab <- paste(signif(ci.level, 2) * 100, "%ci.", c("lb", 
-                                                      "ub"), sep = "")
-  tabfixed <- cbind(coef, coef.se, zval, pvalue, ci.lb, ci.ub)
-  
+  function (object, level = 0.95, sroc.type = "ruttergatsonis", ...) 
+  {
+    stopifnot(sroc.type %in% c("naive", "ruttergatsonis"))
+    ci.level <- level
+    if (ci.level <= 0 || ci.level >= 1) 
+      stop("'ci.level' must be within 0 and 1")
+    coef <- object$coefficients
+    vcov <- object$vcov
+    dim <- object$dim
+    Psi <- object$Psi
+    lab <- object$lab
+    coef <- as.numeric(coef)
+    coef.se <- sqrt(diag(vcov))
+    zval <- coef/coef.se
+    zvalci <- qnorm((1 - ci.level)/2, lower.tail = FALSE)
+    pvalue <- 2 * (1 - pnorm(abs(zval)))
+    ci.lb <- coef - zvalci * coef.se
+    ci.ub <- coef + zvalci * coef.se
+    cilab <- paste(signif(ci.level, 2) * 100, "%ci.", c("lb", 
+                                                        "ub"), sep = "")
+    tabfixed <- cbind(coef, coef.se, zval, pvalue, ci.lb, ci.ub)
     
-  dimnames(tabfixed) <- list(if (dim$k > 1L) colnames(vcov) else lab$p, 
-                             c("Estimate", "Std. Error", "z", "Pr(>|z|)", cilab))
-  
-  if(nrow(tabfixed) == 2){
-    tabfixed <- rbind(tabfixed,tabfixed)
-    tabfixed[3,] <- inv.trafo(object$alphasens, tabfixed[3,])
-    tabfixed[4,] <- inv.trafo(object$alphafpr, tabfixed[4,])
-    tabfixed[3:4,c(2,3,4)] <- NA
-    rownames(tabfixed)[3:4] <- c("sensitivity","false pos. rate")
+    
+    dimnames(tabfixed) <- list(if (dim$k > 1L) colnames(vcov) else lab$p, 
+                               c("Estimate", "Std. Error", "z", "Pr(>|z|)", cilab))
+    
+    if(nrow(tabfixed) == 2){
+      tabfixed <- rbind(tabfixed,tabfixed)
+      tabfixed[3,] <- inv.trafo(object$alphasens, tabfixed[3,])
+      tabfixed[4,] <- inv.trafo(object$alphafpr, tabfixed[4,])
+      tabfixed[3:4,c(2,3,4)] <- NA
+      rownames(tabfixed)[3:4] <- c("sensitivity","false pos. rate")
+    }
+    
+    corFixed <- vcov/outer(coef.se, coef.se)
+    ran.sd <- sqrt(diag(Psi))
+    corRandom <- Psi/outer(ran.sd, ran.sd)
+    #  qstat <- unclass(qtest(object)) 
+    
+    
+    tau_a <- (tabfixed[1,2])^2
+    tau_b <- (tabfixed[2,2])^2
+    cor_sq <- (corRandom[1,2])^2
+    
+    theta_a <- (tabfixed[1,1])
+    theta_b <- 0-(tabfixed[2,1])
+    
+    K <- 1/as.numeric(dim$m)
+    k <- as.numeric(dim$m)
+    
+    Nia <- 1/(object$freqdata$TP + object$freqdata$FP)
+    Nib <- 1/(object$freqdata$TN + object$freqdata$FN)
+    NiA <- sum(Nia)
+    NiB <- sum(Nib)
+    
+    tau <- (1-cor_sq)*tau_a*tau_b
+    em <- ((exp((tau_a/2)+theta_a)+exp((tau_a/2)-theta_a)+2)*K*NiA)*((exp((tau_b/2)+theta_b)+exp((tau_b/2)-theta_b)+2)*K*NiB)
+    
+    i2_z <- (tau^0.5)/((em^0.5)+(tau^0.5))
+    
+    
+    theta_i <-  log((object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni)))/log((object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni)))
+    var_i <- ((1/(object$freqdata1$tpi+object$freqdata1$fni))*((1-(object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni)))/((object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni))*(log((object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni)))^2)))) + ((1/(object$freqdata1$fpi+object$freqdata1$tni))*((1-(object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni)))/((object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni))*(log((object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni)))^2)))) 
+    weight_i <- 1/var_i
+    var_i0 <- (((1-(object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni)))/((object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni))*(log((object$freqdata1$tpi/(object$freqdata1$tpi+object$freqdata1$fni)))^2))) + ((1-(object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni)))/((object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni))*(log((object$freqdata1$fpi/(object$freqdata1$fpi+object$freqdata1$tni)))^2))))
+    weight_i0 <- 1/var_i0
+    sq_weight_i <- weight_i*weight_i
+    sq_weight_i0 <- weight_i0*weight_i0
+    weighted_theta_i <- weight_i*log(theta_i)
+    
+    sum_var_i <- sum(var_i)
+    sum_var_i0 <- sum(var_i0)
+    sum_weight_i <- sum(weight_i)
+    sum_weight_i0 <- sum(weight_i0)
+    sum_sq_weight_i <- sum(sq_weight_i)
+    sum_sq_weight_i0 <- sum(sq_weight_i0)
+    sum_fe_estimator <- sum(weighted_theta_i)/sum_weight_i
+    chisq_i <- weight_i*((log(theta_i)-sum_fe_estimator)^2)
+    chi_sq <- sum(chisq_i)
+    tau02 <- (chi_sq-(k-1)) / (sum_weight_i - (sum_sq_weight_i/sum_weight_i))
+    tau2 <- max(c(0,tau02))
+    
+    var1 <- ((k-1)*sum_weight_i)/ ((sum_weight_i*sum_weight_i)-sum_sq_weight_i)
+    var2 <- (k/sum_weight_i)
+    var3 <- (sum_var_i/k)
+    var10 <- ((k-1)*sum_weight_i0)/((sum_weight_i0*sum_weight_i0)-sum_sq_weight_i0)
+    var20 <- (k/sum_weight_i0)
+    var30 <- (sum_var_i0/k)
+    
+    i2_1 <- tau2/(tau2+var1)
+    i2_2 <- tau2/(tau2+var2)
+    i2_3 <- tau2/(tau2+var3)
+    i2_10 <- tau2/(tau2+var10)
+    i2_20 <- tau2/(tau2+var20)
+    i2_30 <- tau2/(tau2+var30)
+    
+    i2 <- data.frame("Zhou"=i2_z,"HollingUnadjusted1"=i2_1,"HollingUnadjusted2"=i2_2,"HollingUnadjusted3"=i2_3,"HollingAdjusted1"=i2_10,"HollingAdjusted2"=i2_20,"HollingAdjusted3"=i2_30)
+    
+    if(attr(object$logLik,"df")== 5){
+      AUC <- AUC.reitsma(object, sroc.type = sroc.type)
+      coef_hsroc <- calc_hsroc_coef(object)
+    }else{
+      AUC <- NULL
+      coef_hsroc <- NULL}
+    
+    
+    keep <- match(c("vcov", "Psi", "df.res", "rank", "logLik", 
+                    "converged", "dim", "df", "lab", "na.action", "call", 
+                    "terms", "method", "alphasens", "alphafpr"), names(object), 0L)
+    out <- c(list(coefficients = tabfixed), object[keep], list(AIC = AIC(object), 
+                                                               BIC = BIC(object), 
+                                                               corFixed = corFixed, 
+                                                               corRandom = corRandom, 
+                                                               #                                                             qstat = qstat, 
+                                                               ci.level = ci.level,
+                                                               AUC = AUC,
+                                                               i2=i2))
+    class(out) <- "summary.reitsma"
+    return(out)
   }
-    
-  corFixed <- vcov/outer(coef.se, coef.se)
-  ran.sd <- sqrt(diag(Psi))
-  corRandom <- Psi/outer(ran.sd, ran.sd)
-#  qstat <- unclass(qtest(object))  
-  
-
-  if(attr(object$logLik,"df")== 5){
-    AUC <- AUC.reitsma(object, sroc.type = sroc.type)
-    coef_hsroc <- calc_hsroc_coef(object)
-      }else{
-    AUC <- NULL
-    coef_hsroc <- NULL}
-
-
-  keep <- match(c("vcov", "Psi", "df.res", "rank", "logLik", 
-                  "converged", "dim", "df", "lab", "na.action", "call", 
-                  "terms", "method", "alphasens", "alphafpr"), names(object), 0L)
-  out <- c(list(coefficients = tabfixed), object[keep], list(AIC = AIC(object), 
-                                                             BIC = BIC(object), 
-                                                             corFixed = corFixed, 
-                                                             corRandom = corRandom, 
-#                                                             qstat = qstat, 
-                                                             ci.level = ci.level,
-                                                             AUC = AUC,
-                                                             coef_hsroc = coef_hsroc))
-  class(out) <- "summary.reitsma"
-  return(out)
-}
 
 print.summary.reitsma <- function (x, digits = 3, ...){
-    
-    methodname <- c("reml", "ml", "fixed")
-    methodlabel <- c("REML", "ML", "Fixed")
-    cat("Call:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
-        "\n\n", sep = "")
-     cat("Bivariate diagnostic ", 
-         ifelse(x$method == "fixed", "fixed", "random"), 
-         "-effects meta-", ifelse(x$dim$p > 2,"regression", "analysis"), "\n", sep = "")
-    if (x$method != "fixed") {
-      cat("Estimation method: ", methodlabel[which(x$method == 
-        methodname)], "\n", sep = "")
-#      cat("Variance-covariance matrix Psi: ", "unstructured", 
-#          "\n", sep = "")
-    }
-    cat("\n")
-    cat("Fixed-effects coefficients", "\n", sep = "")
-    signif <- symnum(x$coefficients[, "Pr(>|z|)"], corr = FALSE, 
-                     na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 
-                                               1), 
-                     symbols = c("***", "**", "*", ".", " "))
-    tabletot <- formatC(x$coefficients, digits = digits, format = "f")
-    tabletot <- gsub("NA"," -",tabletot)
-    tabletot <- cbind(tabletot, signif)
-    colnames(tabletot)[7] <- ""
-      print(tabletot, quote = FALSE, right = TRUE, print.gap = 1)
-    cat("---\nSignif. codes: ", attr(signif, "legend"), "\n\n")
-    if (!x$method == "fixed") {
-      cat("Variance components: between-studies Std. Dev and correlation matrix", 
-          "\n", sep = "")
-      corRan <- x$corRandom
-      corRan[upper.tri(x$corRan)] <- NA
-      table <- cbind(`Std. Dev` = sqrt(diag(x$Psi)), corRan)
-      if (x$dim$k == 1L) 
-        rownames(table) <- ""
-      table <- formatC(table, digits = digits, format = "f")
-      table[grep("NA", table)] <- "."
-      print(table, quote = FALSE, right = TRUE, na.print = "", 
-            print.gap = 1)
-      cat("\n")
-    }
-    table <- c(x$logLik, x$AIC, x$BIC)
-    names(table) <- c("logLik", "AIC", "BIC")
+  
+  methodname <- c("reml", "ml", "fixed")
+  methodlabel <- c("REML", "ML", "Fixed")
+  cat("Call:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+      "\n\n", sep = "")
+  cat("Bivariate diagnostic ", 
+      ifelse(x$method == "fixed", "fixed", "random"), 
+      "-effects meta-", ifelse(x$dim$p > 2,"regression", "analysis"), "\n", sep = "")
+  if (x$method != "fixed") {
+    cat("Estimation method: ", methodlabel[which(x$method == 
+                                                   methodname)], "\n", sep = "")
+    #      cat("Variance-covariance matrix Psi: ", "unstructured", 
+    #          "\n", sep = "")
+  }
+  cat("\n")
+  cat("Fixed-effects coefficients", "\n", sep = "")
+  signif <- symnum(x$coefficients[, "Pr(>|z|)"], corr = FALSE, 
+                   na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 
+                                             1), 
+                   symbols = c("***", "**", "*", ".", " "))
+  tabletot <- formatC(x$coefficients, digits = digits, format = "f")
+  tabletot <- gsub("NA"," -",tabletot)
+  tabletot <- cbind(tabletot, signif)
+  colnames(tabletot)[7] <- ""
+  print(tabletot, quote = FALSE, right = TRUE, print.gap = 1)
+  cat("---\nSignif. codes: ", attr(signif, "legend"), "\n\n")
+  if (!x$method == "fixed") {
+    cat("Variance components: between-studies Std. Dev and correlation matrix", 
+        "\n", sep = "")
+    corRan <- x$corRandom
+    corRan[upper.tri(x$corRan)] <- NA
+    table <- cbind(`Std. Dev` = sqrt(diag(x$Psi)), corRan)
+    if (x$dim$k == 1L) 
+      rownames(table) <- ""
     table <- formatC(table, digits = digits, format = "f")
-    print(table, quote = FALSE, right = TRUE, print.gap = 1)
+    table[grep("NA", table)] <- "."
+    print(table, quote = FALSE, right = TRUE, na.print = "", 
+          print.gap = 1)
     cat("\n")
-
+  }
+  table <- c(x$logLik, x$AIC, x$BIC)
+  names(table) <- c("logLik", "AIC", "BIC")
+  table <- formatC(table, digits = digits, format = "f")
+  print(table, quote = FALSE, right = TRUE, print.gap = 1)
+  cat("\n")
+  
   if(!is.null(x$AUC)){
     cat(c("AUC: ",as.character(round(x$AUC$AUC,3))))
     cat("\n")  
@@ -259,8 +324,14 @@ print.summary.reitsma <- function (x, digits = 3, ...){
     cat("\n")
   }
   
-}
+  cat("\n")
+  cat("I2 estimates \n")
+  cat("Zhou and Dendukuri approach: ", round(((x$i2$Zhou)*100),1) ,"% \n")
+  cat("Holling sample size unadjusted approaches: ", round((min(c(x$i2$HollingUnadjusted1,x$i2$HollingUnadjusted2,x$i2$HollingUnadjusted3))*100),1),"-",round((max(c(x$i2$HollingUnadjusted1,x$i2$HollingUnadjusted2,x$i2$HollingUnadjusted3))*100),1) ,"% \n")
+  cat("Holling sample size adjusted approaches: ", round((min(c(x$i2$HollingAdjusted1,x$i2$HollingAdjusted2,x$i2$HollingAdjusted3))*100),1),"-",round((max(c(x$i2$HollingAdjusted1,x$i2$HollingAdjusted2,x$i2$HollingAdjusted3))*100),1) ,"%")
   
+}
+
 
 vcov.reitsma <- function(object, ...){object$vcov}
 
@@ -298,7 +369,7 @@ sroc.reitsma <- function(fit, fpr = 1:99/100, type = "ruttergatsonis",
 mcsroc.reitsma <- function(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...){
   mcsroc(fit, replications = replications, lambda = lambda, ...)
 }
-  
+
 ROCellipse.reitsma <- function(x, level = 0.95, add = FALSE, pch = 1, ...){
   ROC.ellipse2(x, conf.level = level, add = add, pch = pch, ...)
 }
@@ -309,17 +380,17 @@ crosshair.reitsma <- function(x, level = 0.95, length = 0.1, pch = 1, ...){
               inv.trafo(x$alphafpr,s$coefficients["tfpr.(Intercept)",5:6]))
   pe <- c(inv.trafo(x$alphafpr,s$coefficients["tfpr.(Intercept)",1]),
           inv.trafo(x$alphasens,s$coefficients["tsens.(Intercept)",1]))
-#  if(!add){
-#    plot(matrix(pe, ncol = 2), pch = pch, xlim = xlim, ylim = ylim, 
-#         ylab = "Sensitivity", xlab = "False Positive Rate", ...)
-#  }else{
-    points(matrix(pe, ncol = 2), pch = pch, ...)
-#  }
+  #  if(!add){
+  #    plot(matrix(pe, ncol = 2), pch = pch, xlim = xlim, ylim = ylim, 
+  #         ylab = "Sensitivity", xlab = "False Positive Rate", ...)
+  #  }else{
+  points(matrix(pe, ncol = 2), pch = pch, ...)
+  #  }
   arrows(ch[2,1], pe[2], x1 =ch[2,2],  length = length, angle = 90, code = 3, ...)
   arrows(pe[1], ch[1,1],  y1 =ch[1,2],  length = length, angle = 90, code = 3, ...)
   return(invisible(NULL))
 }
-  
+
 plot.reitsma <- function(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95, 
                          ylim = c(0,1), xlim = c(0,1), pch = 1, 
                          sroclty = 1, sroclwd = 1, 
@@ -330,15 +401,15 @@ plot.reitsma <- function(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95,
   plot(c(2,2), ylim = ylim, xlim = xlim, 
        xlab = "False Positive Rate", ylab = "Sensitivity", ...)
   if(length(coef(x)) == 2){
-  FP <- x$freqdata$FP
-  negatives <- FP + x$freqdata$TN
-  FPR <- FP/negatives
-  
-  if(extrapolate){bound = c(0,1)}
-  if(!extrapolate){bound = c(min(FPR), max(FPR))}
-  srocmat <- sroc(x, type = type)
-  lines(srocmat[cut(srocmat[,1],bound, "withinbound") == "withinbound",], 
-        lty = sroclty, lwd = sroclwd)
+    FP <- x$freqdata$FP
+    negatives <- FP + x$freqdata$TN
+    FPR <- FP/negatives
+    
+    if(extrapolate){bound = c(0,1)}
+    if(!extrapolate){bound = c(min(FPR), max(FPR))}
+    srocmat <- sroc(x, type = type)
+    lines(srocmat[cut(srocmat[,1],bound, "withinbound") == "withinbound",], 
+          lty = sroclty, lwd = sroclwd)
   }else{
     warning("Not plotting any SROC for meta-regression")
   }
@@ -354,7 +425,7 @@ plot.reitsma <- function(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95,
     predellipse[,1] <- inv.trafo(alpha.fpr, talphaellipse[,2])
     predellipse[,2] <- inv.trafo(alpha.sens, talphaellipse[,1])
     lines(predellipse, lty = predlty, lwd = predlwd)
-}
+  }
   
   return(invisible(NULL))
 }
@@ -363,7 +434,7 @@ confint.reitsma <- function (object, parm, level = 0.95, ...)
 {
   cf <- as.numeric(coef(object))
   if(missing(parm)){parm <- colnames(vcov(object))}
-
+  
   a <- (1 - level)/2
   a <- c(a, 1 - a)
   pct <- paste(format(100 * a, trim = TRUE, scientific = FALSE, digits = 3),
@@ -426,17 +497,17 @@ calc_hsroc_coef <- function(fit){
 
 anova.reitsma <- function(object, fit2, ...){
   fit1 <- object
-  if(!(class(fit1) == "reitsma" & class(fit2) == "reitsma")){
+  if(!(is(fit1, "reitsma") & is(fit2, "reitsma"))){
     stop("This function is only for models of class 'reitsma'.")
   }
   if(!(fit1$method == "ml" & fit2$method == "ml")){
     stop("Both models have to be fitted with maximum likelihood. Set method = 'ml' in reitsma.")
-  if(!(identical(fit1$data, fit2$data))){
-    stop("Both models have to be fitted to the same data set.")
-  }
-  if(!(fit1$nobs == fit2$nobs)){
-    stop("Both models have to be fitted to the same number of primary studies. Make sure missing data did not lead to the omission of studies.")
-  }
+    if(!(identical(fit1$data, fit2$data))){
+      stop("Both models have to be fitted to the same data set.")
+    }
+    if(!(fit1$nobs == fit2$nobs)){
+      stop("Both models have to be fitted to the same number of primary studies. Make sure missing data did not lead to the omission of studies.")
+    }
   }
   df1 <- fit1$df$fixed
   df2 <- fit2$df$fixed

@@ -9,7 +9,7 @@ AUC.default <- function(x, fpr = 1:99/100, ...){
   s <- numeric(n)
   for(i in 1: n){
     temp <- try(sroc(fpr[i]))
-    if(class(temp) == "try-error"){stop(paste("calculation of sroc failed for value of FPR ", fpr[i]))}
+    if(inherits(temp,"try-error",TRUE)){stop(paste("calculation of sroc failed for value of FPR ", fpr[i]))}
     if(temp < 0 | temp > 1){stop("expected values of sroc to be >= 0 and <= 1, but this is not the case for FPR value ", fpr[i])}      
     s[i] <- temp
   } # end of loop 

@@ -71,7 +71,7 @@ The \code{summary} function for \code{reitsma} objects also contains the five pa
 
 The \code{plot} method for \code{reitsma} objects will plot the generalization of the Rutter-Gatsonis curve.
 
-If you require positive or negative likelihood ratios, you should use \code{\link{SummaryPts}}.
+If you require positive or negative likelihood ratios, you should use \code{\link{SummaryPts}}. If you require positive or negative predictive values, see \code{\link{predv_r}} and \code{\link{predv_d}}.
 }
 \value{
 \code{sroc} returns a  matrix ready for plotting. Each row corresponds to one point in ROC space. \code{mcsroc} returns a \code{\link{lowess}} smooth. \code{ROCellipse} returns a list, the first element being a matrix of points in ROC space that delimit the confidence region and the second is the point estimate of the pair of sensitivity and false positive rate in ROC space.
