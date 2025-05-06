@@ -28,7 +28,7 @@ Objects of the class \code{\link{reitsma}} are output by the function with the s
 \method{print}{reitsma}(x, digits = 4, ...)
 \method{summary}{reitsma}(object, level = 0.95, sroc.type = "ruttergatsonis", ...)
 \method{sroc}{reitsma}(fit, fpr = 1:99/100, type = "ruttergatsonis", return_function = FALSE, ...)
-\method{mcsroc}{reitsma}(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...)
+\method{mcsroc}{reitsma}(fit, replications = 10000, lambda = 100, ...)
 \method{ROCellipse}{reitsma}(x, level = 0.95, add = FALSE, pch = 1, ...)
 \method{crosshair}{reitsma}(x, level = 0.95, length = 0.1, pch = 1, ...)
 \method{plot}{reitsma}(x, extrapolate = FALSE, plotsumm = TRUE, level = 0.95, 

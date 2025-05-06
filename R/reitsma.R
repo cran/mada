@@ -366,7 +366,7 @@ sroc.reitsma <- function(fit, fpr = 1:99/100, type = "ruttergatsonis",
   }
 }
 
-mcsroc.reitsma <- function(fit, fpr = 1:99/100, replications = 10000, lambda = 100, ...){
+mcsroc.reitsma <- function(fit, replications = 10000, lambda = 100,  ...){
   mcsroc(fit, replications = replications, lambda = lambda, ...)
 }
 

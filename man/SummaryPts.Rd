@@ -37,7 +37,7 @@ SummaryPts(object, ...)
   \item{...}{arguments to be passed on to other functions, currently ignored}
 }
 \details{
-Samples are generated from a bivariate normal using \code{\link{rmvnorm}}. Note that the FUN argument
+Samples are generated from a bivariate normal using \code{\link[mvtnorm]{rmvnorm}}. Note that the FUN argument
 }
 \value{
 An object of the class \code{SummaryPts} for which \code{print} and \code{summary} methods are available.

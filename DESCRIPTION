@@ -1,16 +1,26 @@
 Package: mada
 Type: Package
 Title: Meta-Analysis of Diagnostic Accuracy
-Version: 0.5.11
-Date: 2022-07-11
-Author: Philipp Doebler with contributions from Bernardo Sousa-Pinto
-Maintainer: Philipp Doebler <philipp.doebler@googlemail.com>
+Version: 0.5.12
+Date: 2025-05-06
+Authors@R: c(person("Philipp", "Doebler", role = c("aut", "cre"),
+                     email = "philipp.doebler@googlemail.com",
+                     comment = c(ORCID = "0000-0002-2946-8526")),
+              person("Bernado", "Sousa-Pinto", role = "ctb",
+                     email = "bernardo@med.up.pt",
+                     comment = c(ORCID = "0000-0002-1277-3401")))
 Description: Provides functions for diagnostic meta-analysis. Next to basic analysis and visualization the bivariate Model of Reitsma et al. (2005) that is equivalent to the HSROC of Rutter & Gatsonis (2001) can be fitted. A new approach based to diagnostic meta-analysis of Holling et al. (2012) is also available. Standard methods like summary, plot and so on are provided.
 Depends: R (>= 3.5.0), stats, mvtnorm, ellipse, mvmeta, metafor
 Imports: methods
 License: GPL-2
-URL: r-forge.r-project.org/projects/mada/
+URL: https://r-forge.r-project.org/projects/mada/
+Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2022-07-15 19:24:21 UTC; doebler
+Packaged: 2025-05-06 07:20:34 UTC; doebler
+Author: Philipp Doebler [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-2946-8526>),
+  Bernado Sousa-Pinto [ctb] (ORCID:
+    <https://orcid.org/0000-0002-1277-3401>)
+Maintainer: Philipp Doebler <philipp.doebler@googlemail.com>
 Repository: CRAN
-Date/Publication: 2022-07-15 19:40:02 UTC
+Date/Publication: 2025-05-06 15:50:02 UTC

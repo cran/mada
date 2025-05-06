@@ -42,17 +42,11 @@ The \code{AuditC} data is from Kriston et al. (2008). The \code{Dementia} from M
 }
 
 \source{
-Kriston, L., H{\"o}elzel, L., Weiser, A., Berner, M., & Haerter, M. (2008).\dQuote{ Meta-analysis: Are 3
-Questions Enough to Detect Unhealthy Alcohol Use?} \emph{ Annals of Internal Medicine},
-\bold{149}, 879--888.
+Kriston, L., Hölzel, L., Weiser, A., Berner, M., & Haerter, M. (2008). \dQuote{Meta-analysis: Are 3 Questions Enough to Detect Unhealthy Alcohol Use?} \emph{Annals of Internal Medicine}, \bold{149}, 879--888.
 
-Mitchell, A. (2009). \dQuote{A meta-analysis of the accuracy of the mini-mental state examination
-in the detection of dementia and mild cognitive impairment.} \emph{Journal of Psychiatric
-Research}, \bold{43}, 411--431.
+Mitchell, A. (2009). \dQuote{A meta-analysis of the accuracy of the mini-mental state examination in the detection of dementia and mild cognitive impairment.} \emph{Journal of Psychiatric Research}, \bold{43}, 411--431.
 
-Patrick, D., Cheadle, A., Thompson, D., Diehr, P., Koepsell, T., & Kinne, S. (1994). \dQuote{The
-validity of self-reported smoking: a review and meta-analysis.} \emph{American Journal of
-Public Health}, \bold{84}, 1086--1093.
+Patrick, D., Cheadle, A., Thompson, D., Diehr, P., Koepsell, T., & Kinne, S. (1994). \dQuote{The validity of self-reported smoking: a review and meta-analysis.} \emph{American Journal of Public Health}, \bold{84}, 1086--1093.
 
 Sousa-Pinto, B., Tarrio, I., Blumenthal, K.G., Araujo, L., Azevedo, L.F., Delgado, L. & Fonseca, J.A. (2021). \dQuote{Accuracy of penicillin allergy diagnostic tests: A systematic review and meta-analysis.} \emph{Journal of Allergy and Clinical Immunology}, \bold{147}, 296--308.
 }
